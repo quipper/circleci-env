@@ -12,18 +12,82 @@ gem 'circleci-env'
 
 And then execute:
 
-    $ bundle
+```sh
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install circleci-env
+```sh
+$ gem install circleci-env
+```
 
 ## Usage
 
 ```rb
+$ export CIRCLECI_TOKEN='...'
+$ vi Envfile
+$ circleci-env apply --dry-run
+$ circleci-env apply
 ```
 
-### Handle secret values
+## Envfile examples
+
+### For single project
+
+```rb
+project "github/user/repo" do
+  env "KEY1", "value1"
+  env "KEY2", "value2
+end
+```
+
+### For multiple project
+
+`circleci-env` recommand to use following project structure.
+
+```
+|- projects
+|  |- github
+|     |- user
+|     |  |- repo1.rb
+|     |  |- repo2.rb
+|     |
+|     |- organization
+|        |- repo3.rb
+|
+|- Envfile
+```
+
+#### Envfile
+
+```rb
+#
+# If you want to write common setting, write here
+#
+
+Dir[File.expand_path('../projects', __FILE__) + '/**/*.rb'].each do |file|
+  require file
+end
+```
+
+#### For each project
+
+```rb
+project "github/user/repo1" do
+  env "KEY1", "value1"
+  env "KEY2", "value2
+end
+```
+
+```rb
+project "github/user/repo2" do
+  env "KEY1", "value1"
+  env "KEY2", "value2
+end
+```
+
+zYou can see real example in [examples](./examples) folder.
 
 ## Development
 
@@ -33,9 +97,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/circleci-env.
+Bug reports and pull requests are welcome on GitHub at https://github.com/hakobera/circleci-env.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
