@@ -21,6 +21,10 @@ module Circleci
         post "/api/v1.1/project/#{project_id}/envvar", { name: name, value: value }
       end
 
+      def delete_envvar(project_id, name)
+        delete "/api/v1.1/project/#{project_id}/envvar/#{name}"
+      end
+
       private
 
       def conn
@@ -43,6 +47,15 @@ module Circleci
 
       def post(path, body)
         response = conn.post(path, body)
+        if response.success?
+          JSON.parse(response.body)
+        else
+          nil
+        end
+      end
+
+      def delete(path, body=nil)
+        response = conn.delete(path, body)
         if response.success?
           JSON.parse(response.body)
         else

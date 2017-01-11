@@ -1,5 +1,4 @@
 require "circleci/env/dsl/project"
-require "circleci/env/dsl/env_var"
 
 module Circleci
   module Env

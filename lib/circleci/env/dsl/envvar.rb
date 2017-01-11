@@ -1,7 +1,7 @@
 module Circleci
   module Env
     module DSL
-      class EnvVar
+      class Envvar
         attr_reader :name, :value
 
         def initialize(name, value)
@@ -10,7 +10,7 @@ module Circleci
         end
 
         def to_s
-          "EnvVar(#{name}=#{value})"
+          "Envvar(#{name}=#{value})"
         end
       end
     end

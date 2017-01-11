@@ -1,4 +1,4 @@
-require_relative "./env_var"
+require_relative "./envvar"
 
 module Circleci
   module Env
@@ -6,7 +6,7 @@ module Circleci
       class Project
         @@projects = []
 
-        attr_reader :env_vars
+        attr_reader :envvars
 
         def self.define(id)
           new(id)
@@ -21,20 +21,18 @@ module Circleci
         end
 
         def env(key, value)
-          env_var = EnvVar.new(key, value)
-          @env_vars << env_var
+          @envvars << Envvar.new(key, value)
         end
 
         def to_s
-          "Project(id=#{id}, env_vars=#{env_vars.join(", ")})"
+          "Project(id=#{id}, env_vars=#{envvars.join(", ")})"
         end
 
         private
 
         def initialize(id)
-          @env_vars = []
+          @envvars = []
           parse_id(id)
-
           @@projects << self
         end
 
