@@ -1,5 +1,7 @@
 require "commander"
 require "circleci/env/command/apply_command"
+require "circleci/env/command/vault/write_command"
+require "circleci/env/command/vault/read_command"
 
 module Circleci
   module Env
@@ -11,6 +13,14 @@ module Circleci
         program :version, Circleci::Env::VERSION
         program :description, "circleci-env is a tool to manage CircleCI environment variables."
         program :help_formatter, :compact
+
+        def fetch_password(options)
+          if options.password_file
+            passwd = File.read(options.password_file).chomp
+          else
+            passwd = ask("Password: ") { |q| q.echo = "*" }
+          end
+        end
 
         command :apply do |c|
           c.syntax = "circleci-env apply [options]"
@@ -24,9 +34,32 @@ module Circleci
               command(:help).run(['apply'])
               raise 'You need to set TOKEN'
             end
+            Command::ApplyCommand.new(options).run
+          end
+        end
 
-            command = Command::ApplyCommand.new(options)
-            command.run
+        command :'vault write' do |c|
+          c.syntax = "circleci-env vault write name=value"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "Write secret value"
+          c.action do |args, options|
+            Command::Vault::WriteCommand.new(
+              password: fetch_password(options),
+              name: args.first,
+              value: args.last
+            ).run
+          end
+        end
+
+        command :'vault read' do |c|
+          c.syntax = "circleci-env vault read name"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "Read secret value"
+          c.action do |args, options|
+            Command::Vault::ReadCommand.new(
+              password: fetch_password(options),
+              name: args.first
+            ).run
           end
         end
 
