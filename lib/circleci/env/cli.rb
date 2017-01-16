@@ -1,7 +1,8 @@
 require "commander"
 require "circleci/env/command/apply_command"
-require "circleci/env/command/vault/write_command"
+require "circleci/env/command/vault/list_command"
 require "circleci/env/command/vault/read_command"
+require "circleci/env/command/vault/write_command"
 
 module Circleci
   module Env
@@ -63,7 +64,19 @@ module Circleci
           end
         end
 
-        never_trace!
+        command :'vault list' do |c|
+          c.syntax = "circleci-env vault list"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "List all secret values"
+          c.action do |args, options|
+            passwd = fetch_password(options)
+            Command::Vault::ListCommand.new(
+              password: passwd
+            ).run
+          end
+        end
+
+        #never_trace!
         run!
       end
     end

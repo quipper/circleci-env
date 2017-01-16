@@ -1,4 +1,5 @@
 require 'ansible/vault'
+require "colorize"
 
 module Circleci
   module Env
