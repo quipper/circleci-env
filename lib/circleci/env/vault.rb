@@ -1,25 +1,17 @@
 require "ansible/vault"
 
-class String
-  def raw; self end
-end
-
 module Circleci
   module Env
     module Vault
       SECRET_DIR = "secret"
 
-      class SecretString
-        def initialize(str)
-          @str = str
-        end
-
-        def raw
-          @str
-        end
-
+      class SecretString < String
         def to_s
-          "xxxx#{@str[-1]}"
+          "xxxx#{self[-1]}"
+        end
+
+        def to_str
+          self
         end
       end
 
