@@ -1,5 +1,8 @@
 require "commander"
 require "circleci/env/command/apply_command"
+require "circleci/env/command/vault/list_command"
+require "circleci/env/command/vault/read_command"
+require "circleci/env/command/vault/write_command"
 
 module Circleci
   module Env
@@ -12,25 +15,74 @@ module Circleci
         program :description, "circleci-env is a tool to manage CircleCI environment variables."
         program :help_formatter, :compact
 
+        def fetch_password(options)
+          if options.password
+            passwd = options.password
+          elsif options.password_file
+            passwd = File.read(options.password_file).chomp
+          elsif ENV['CIRCLECI_ENV_PASSWORD']
+            passwd = ENV['CIRCLECI_ENV_PASSWORD']
+          else
+            passwd = ask("Password: ") { |q| q.echo = "*" }
+          end
+        end
+
         command :apply do |c|
           c.syntax = "circleci-env apply [options]"
           c.description = "Apply CiecleCI environment variables from config files"
           c.option "-c", "--config FILE", String, "Config file name"
-          c.option "-t", "--token TOKEN", String, "CircleCI API token"
+          c.option "--token TOKEN", String, "CircleCI API token"
+          c.option "-p", "--password PASSWORD", String, "Specify password"
+          c.option "--password-file PASSWORD_FILE", String, "Specify password file"
           c.option "--dry-run", "Run dry-run mode"
           c.action do |args, options|
-            options.default config: "Envfile", token: ENV['CIRCLECI_TOKEN']
+            options.default config: "Envfile", token: ENV['CIRCLECI_TOKEN'], password: fetch_password(options)
             if options.token.nil?
               command(:help).run(['apply'])
               raise 'You need to set TOKEN'
             end
-
-            command = Command::ApplyCommand.new(options)
-            command.run
+            Command::ApplyCommand.new(options).run
           end
         end
 
-        never_trace!
+        command :'vault write' do |c|
+          c.syntax = "circleci-env vault write name=value"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "Write secret value"
+          c.action do |args, options|
+            Command::Vault::WriteCommand.new(
+              password: fetch_password(options),
+              name: args.first,
+              value: args.last
+            ).run
+          end
+        end
+
+        command :'vault read' do |c|
+          c.syntax = "circleci-env vault read name"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "Read secret value"
+          c.action do |args, options|
+            Command::Vault::ReadCommand.new(
+              password: fetch_password(options),
+              name: args.first
+            ).run
+          end
+        end
+
+        command :'vault list' do |c|
+          c.syntax = "circleci-env vault list"
+          c.option "-p", "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.description = "List all secret values"
+          c.action do |args, options|
+            passwd = fetch_password(options)
+            Command::Vault::ListCommand.new(
+              password: passwd
+            ).run
+          end
+        end
+
+        #never_trace!
         run!
       end
     end

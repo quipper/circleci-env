@@ -4,5 +4,5 @@ project "github/hakobera/circleci-env-test-02" do
   Random.new.rand(15).times do |i|
     env "KEY#{i}", "value#{i}"
   end
-  #env "SECRET_KEY", secrets["secret_key"]
+  env "SECRET_KEY", secret("secret_key")
 end

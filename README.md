@@ -27,8 +27,8 @@ $ gem install circleci-env
 ```rb
 $ export CIRCLECI_TOKEN='...'
 $ vi Envfile
-$ circleci-env apply --dry-run
-$ circleci-env apply
+$ ccenv apply --dry-run
+$ ccenv apply
 ```
 
 ## Envfile examples
@@ -47,16 +47,15 @@ end
 `circleci-env` recommand to use following project structure.
 
 ```
-|- projects
-|  |- github
-|     |- user
-|     |  |- repo1.rb
-|     |  |- repo2.rb
-|     |
-|     |- organization
-|        |- repo3.rb
-|
 |- Envfile
+|- projects
+   |- github
+      |- user
+      |  |- repo1.rb
+      |  |- repo2.rb
+      |
+      |- organization
+         |- repo3.rb
 ```
 
 #### Envfile
@@ -87,7 +86,54 @@ project "github/user/repo2" do
 end
 ```
 
-zYou can see real example in [examples](./examples) folder.
+You can see real example in [examples](./examples) folder.
+
+## Secret values
+
+`circleci-env` support vault feature to manage secret values like API key.
+
+### Project structure
+
+All secret value files include one directory named `secret` like this:
+
+```
+|- Envfile
+|- secret
+   |- secret_key.vault
+   |- some_api_token.vault
+   |- ...
+```
+
+For each file, it must include one secret value and has `.vault` extention.
+In `Envfile`, you can refer these values by filename without extention.
+For example, you can refer secret value in `secrete_key.vault` like:
+
+```rb
+project "github/user/repo1" do
+  env "SECRET_KEY", secret("secret_key")
+end
+```
+
+### Write secret value
+
+Run following command:
+
+```sh
+$ circleci-env vault --password xxx --write --key secret_key --value "Some secret value"
+```
+
+This command create a file named `secret_key.valut` in `secret` directory.
+
+### Read secret value
+
+Run following command:
+
+```sh
+$ circleci-env vault --password xxx --read --key secret_key
+#=> "Some secret value"
+```
+
+This command read a secret value from `secret_key.valut` in `secret` directory.
 
 ## Development
 

@@ -1,4 +1,5 @@
 require_relative "./envvar"
+require "circleci/env/application"
 
 module Circleci
   module Env
@@ -22,6 +23,10 @@ module Circleci
 
         def env(key, value)
           @envvars << Envvar.new(key, value)
+        end
+
+        def secret(name)
+          Circleci::Env::Application.instance.secret(name)
         end
 
         def to_s
