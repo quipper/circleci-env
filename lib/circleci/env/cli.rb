@@ -16,8 +16,12 @@ module Circleci
         program :help_formatter, :compact
 
         def fetch_password(options)
-          if options.password_file
+          if options.password
+            passwd = options.password
+          elsif options.password_file
             passwd = File.read(options.password_file).chomp
+          elsif ENV['CIRCLECI_ENV_PASSWORD']
+            passwd = ENV['CIRCLECI_ENV_PASSWORD']
           else
             passwd = ask("Password: ") { |q| q.echo = "*" }
           end
@@ -27,10 +31,12 @@ module Circleci
           c.syntax = "circleci-env apply [options]"
           c.description = "Apply CiecleCI environment variables from config files"
           c.option "-c", "--config FILE", String, "Config file name"
-          c.option "-t", "--token TOKEN", String, "CircleCI API token"
+          c.option "--token TOKEN", String, "CircleCI API token"
+          c.option "-p", "--password PASSWORD", String, "Specify password"
+          c.option "--password-file PASSWORD_FILE", String, "Specify password file"
           c.option "--dry-run", "Run dry-run mode"
           c.action do |args, options|
-            options.default config: "Envfile", token: ENV['CIRCLECI_TOKEN']
+            options.default config: "Envfile", token: ENV['CIRCLECI_TOKEN'], password: fetch_password(options)
             if options.token.nil?
               command(:help).run(['apply'])
               raise 'You need to set TOKEN'

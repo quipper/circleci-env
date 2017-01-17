@@ -24,7 +24,7 @@ module Circleci
 
             max_len += 2
             vars.each do |v|
-              puts "#{(v[0]+':').ljust(max_len, ' ').light_green}#{v[1]}"
+              puts "#{(v[0]+':').ljust(max_len, ' ').light_green}#{v[1].raw}"
             end
           end
         end
