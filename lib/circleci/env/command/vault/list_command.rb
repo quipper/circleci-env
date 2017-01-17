@@ -1,11 +1,13 @@
 require "fileutils"
-require_relative "../vault_command"
+require "circleci/env/vault"
 
 module Circleci
   module Env
     module Command
       module Vault
-        class ListCommand < VaultCommand
+        class ListCommand
+          include Circleci::Env::Vault
+
           def initialize(password:)
             @password = password
           end
@@ -14,9 +16,8 @@ module Circleci
             puts "=== Secret Vars".light_blue
             max_len = 0
             vars = []
-            Dir.glob("secret/*.vault") do |file|
-              name = File.basename(file, ".vault")
-              contents = Ansible::Vault.read(path: secret_file_path(name), password: @password)
+
+            secrets(@password) do |name, contents|
               max_len = name.length if max_len < name.length
               vars << [name, contents]
             end

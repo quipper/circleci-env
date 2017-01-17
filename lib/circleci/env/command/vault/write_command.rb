@@ -1,11 +1,13 @@
 require "fileutils"
-require_relative "../vault_command"
+require "circleci/env/vault"
 
 module Circleci
   module Env
     module Command
       module Vault
-        class WriteCommand < VaultCommand
+        class WriteCommand
+          include Circleci::Env::Vault
+
           def initialize(name:, value:, password:)
             @name = name
             @value = value
@@ -13,14 +15,9 @@ module Circleci
           end
 
           def run
-            FileUtils.mkdir_p(SECRET_DIR)
-
+            FileUtils.mkdir_p(File.dirname(secret_file_path(@name)))
             puts "Write secret value to #{secret_file_path(@name)}"
-            Ansible::Vault.write({
-              path: secret_file_path(@name),
-              password: @password,
-              plaintext: @value
-            })
+            write(@name, @value, @password)
           end
         end
       end

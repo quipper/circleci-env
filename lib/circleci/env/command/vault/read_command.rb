@@ -1,11 +1,13 @@
 require "fileutils"
-require_relative "../vault_command"
+require "circleci/env/vault"
 
 module Circleci
   module Env
     module Command
       module Vault
-        class ReadCommand < VaultCommand
+        class ReadCommand
+          include Circleci::Env::Vault
+
           def initialize(name:, password:)
             @name = name
             @password = password
@@ -13,8 +15,7 @@ module Circleci
 
           def run
             puts "Read secret value from #{secret_file_path(@name)}"
-            contents = Ansible::Vault.read(path: secret_file_path(@name), password: @password)
-            puts contents
+            puts read(@name, @password)
           end
         end
       end
