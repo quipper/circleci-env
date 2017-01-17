@@ -37,7 +37,7 @@ module Circleci
 
             add_envvars.each do |envvar|
               puts "  + add    #{envvar.name}=#{envvar.value}".light_green
-              api.add_envvar(proj.id, envvar.name, envvar.value.raw) unless dry_run?
+              api.add_envvar(proj.id, envvar.name, envvar.value.to_str) unless dry_run?
             end
 
             delete_envvars.each do |envvar|
@@ -47,7 +47,7 @@ module Circleci
 
             update_envvars.each do |envvar|
               puts "  ~ update #{envvar.name}=#{envvar.value}".light_blue
-              api.add_envvar(proj.id, envvar.name, envvar.value.raw) unless dry_run?
+              api.add_envvar(proj.id, envvar.name, envvar.value.to_str) unless dry_run?
             end
 
             unless dry_run?
