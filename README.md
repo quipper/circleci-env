@@ -110,7 +110,7 @@ For example, you can refer secret value in `secrete_key.vault` like:
 
 ```rb
 project "github/user/repo1" do
-  env "SECRET_KEY", secrets("secret_key")
+  env "SECRET_KEY", secret("secret_key")
 end
 ```
 
