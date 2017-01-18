@@ -7,7 +7,7 @@ module Circleci
       class Project
         @@projects = []
 
-        attr_reader :envvars
+        attr_reader :vcs_type, :username, :repository, :envvars
 
         def self.define(id)
           new(id)
@@ -18,11 +18,11 @@ module Circleci
         end
 
         def id
-          "#{@vcs_type}/#{@username}/#{@repository}"
+          "#{vcs_type}/#{username}/#{repository}"
         end
 
         def env(key, value)
-          @envvars << Envvar.new(key, value)
+          envvars << Envvar.new(key, value)
         end
 
         def secret(name)
@@ -30,7 +30,9 @@ module Circleci
         end
 
         def to_s
-          "Project(id=#{id}, env_vars=#{envvars.join(", ")})"
+          s = "Project(id=#{id}"
+          s += ", envvars=[#{envvars.join(", ")})]" if envvars.length > 0
+          s += ")"
         end
 
         private
