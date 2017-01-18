@@ -37,8 +37,10 @@ $ circleci-env apply
 
 ```rb
 project "github/user/repo" do
-  env "KEY1", "value1"
-  env "KEY2", "value2
+  env(
+    "KEY1" => "value1",
+    "KEY2" => "Value2",
+  )
 end
 ```
 
@@ -74,15 +76,19 @@ end
 
 ```rb
 project "github/user/repo1" do
-  env "KEY1", "value1"
-  env "KEY2", "value2
+  env(
+    "KEY1" => "value1",
+    "KEY2" => "value2",
+  )
 end
 ```
 
 ```rb
 project "github/user/repo2" do
-  env "KEY1", "value1"
-  env "KEY2", "value2
+  env(
+    "KEY1" => "value1",
+    "KEY2" => "value2",
+  )
 end
 ```
 
@@ -110,7 +116,10 @@ For example, you can refer secret value in `secrete_key.vault` like:
 
 ```rb
 project "github/user/repo1" do
-  env "SECRET_KEY", secret("secret_key")
+  env(
+    "NORMAL_KEY" => "value1",
+    "SECRET_KEY" => secret("secret_key")
+  )
 end
 ```
 
