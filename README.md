@@ -27,8 +27,8 @@ $ gem install circleci-env
 ```rb
 $ export CIRCLECI_TOKEN='...'
 $ vi Envfile
-$ ccenv apply --dry-run
-$ ccenv apply
+$ circleci-env apply --dry-run
+$ circleci-env apply
 ```
 
 ## Envfile examples
@@ -119,7 +119,8 @@ end
 Run following command:
 
 ```sh
-$ circleci-env vault --password xxx --write --key secret_key --value "Some secret value"
+$ export CIRCLECI_ENV_PASSWORD=xxx
+$ circleci-env vault write secret_key "Some secret value"
 ```
 
 This command create a file named `secret_key.valut` in `secret` directory.
@@ -129,11 +130,22 @@ This command create a file named `secret_key.valut` in `secret` directory.
 Run following command:
 
 ```sh
-$ circleci-env vault --password xxx --read --key secret_key
+$ export CIRCLECI_ENV_PASSWORD=xxx
+$ circleci-env vault read secret_key
 #=> "Some secret value"
 ```
 
 This command read a secret value from `secret_key.valut` in `secret` directory.
+
+### List all secret values
+
+```sh
+$ export CIRCLECI_ENV_PASSWORD=xxx
+$ circleci-env vault list                                                                                                                                                                                                 (git)-[master] -
+=== Secret Vars
+key1: value1
+key2: value2
+```
 
 ## Development
 
