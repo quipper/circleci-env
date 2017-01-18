@@ -1,5 +1,5 @@
-require "fileutils"
 require "circleci/env/vault"
+require "fileutils"
 
 module Circleci
   module Env

@@ -1,3 +1,6 @@
+require "spec_helper"
+require "circleci/env/vault"
+
 describe Circleci::Env::Vault do
   describe Circleci::Env::Vault::SecretString do
     before do

@@ -1,9 +1,9 @@
-require "singleton"
-
 module Circleci
   module Env
-    class Application
-      include Singleton
+    class App
+      def initialize
+        @secrets = {}
+      end
 
       def secret(name)
         @secrets[name]
@@ -11,12 +11,6 @@ module Circleci
 
       def add_secret(name, value)
         @secrets[name] = value
-      end
-
-      private
-
-      def initialize
-        @secrets = {}
       end
     end
   end

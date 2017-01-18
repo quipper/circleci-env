@@ -1,7 +1,7 @@
-require "colorize"
-require "circleci/env/api"
+require "circleci/env"
 require "circleci/env/dsl"
 require "circleci/env/vault"
+require "colorize"
 
 module Circleci
   module Env
@@ -15,7 +15,7 @@ module Circleci
 
         def run
           secrets(@options.password) do |name, contents|
-            Circleci::Env::Application.instance.add_secret(name, contents)
+            Circleci::Env.app.add_secret(name, contents)
           end
 
           load_config(@options.config)
