@@ -1,4 +1,5 @@
 require "circleci/env"
+require "circleci/env/api"
 require "circleci/env/dsl"
 require "circleci/env/vault"
 require "colorize"
