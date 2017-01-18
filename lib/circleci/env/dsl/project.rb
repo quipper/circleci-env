@@ -21,8 +21,10 @@ module Circleci
           "#{vcs_type}/#{username}/#{repository}"
         end
 
-        def env(key, value)
-          envvars << Envvar.new(key, value)
+        def env(key_values)
+          key_values.each do |key, value|
+            envvars << Envvar.new(key, value)
+          end
         end
 
         def secret(name)

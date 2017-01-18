@@ -21,8 +21,12 @@ module Circleci
             FileUtils.mkdir_p("projects/#{dir(project)}")
             File.open("projects/#{id(project)}.rb", "w") do |f|
               f.puts "project \"#{id(project)}\" do"
-              api.list_envvars(id(project)).each do |v|
-                f.puts "  env \"#{v['name']}\", \"#{v['value']}\""
+              if !envvars.empty?
+                f.puts("  env(")
+                envvars.each do |v|
+                  f.puts "    \"#{v['name']}\" => \"#{v['value']}\","
+                end
+                f.puts("  )")
               end
               f.puts "end"
             end

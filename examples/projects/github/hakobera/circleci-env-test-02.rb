@@ -1,8 +1,11 @@
 project "github/hakobera/circleci-env-test-02" do
-  env "KEY", "value1"
-  env "Abc", "value1"
+  env(
+    "KEY" => "value1",
+    "Abc" => "value1",
+    "SECRET_KEY" => secret("secret_key"),
+  )
+
   Random.new.rand(15).times do |i|
-    env "KEY#{i}", "value#{i}"
+    env "KEY#{i}" => "value#{i}"
   end
-  env "SECRET_KEY", secret("secret_key")
 end
