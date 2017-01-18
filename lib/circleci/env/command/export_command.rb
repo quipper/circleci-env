@@ -14,6 +14,10 @@ module Circleci
 
         def run
           api.list_projects.each do |project|
+            envvars = api.list_envvars(id(project))
+            next if @options.ignore_empty && envvars.empty?
+            next if @options.filter && !id(project).match(Regexp.new(@options.filter))
+
             FileUtils.mkdir_p("projects/#{dir(project)}")
             File.open("projects/#{id(project)}.rb", "w") do |f|
               f.puts "project \"#{id(project)}\" do"

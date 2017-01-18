@@ -49,9 +49,11 @@ module Circleci
         command :export do |c|
           c.syntax = "circleci-env export [options]"
           c.description = "Export CiecleCI environment variables from API"
+          c.option "--filter REGEX", String, "Regex to filter projects"
+          c.option "--ignore-empty", "Ignore project which has no environment variables"
           c.option "--token TOKEN", String, "CircleCI API token"
           c.action do |args, options|
-            options.default token: ENV['CIRCLECI_TOKEN']
+            options.default token: ENV['CIRCLECI_TOKEN'], filter: ".*"
             if options.token.nil?
               command(:help).run(['export'])
               raise 'You need to set TOKEN'
