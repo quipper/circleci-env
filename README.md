@@ -16,6 +16,11 @@
   - [Write secret value](#write-secret-value)
   - [Read secret value](#read-secret-value)
   - [List all secret values](#list-all-secret-values)
+- [Export existing project's envvars](#export-existing-projects-envvars)
+  - [Export all projects which you can access](#export-all-projects-which-you-can-access)
+  - [Export single project](#export-single-project)
+  - [Export projects which muched by by filter](#export-projects-which-muched-by-by-filter)
+  - [Export folder structure](#export-folder-structure)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -43,6 +48,26 @@ $ gem install circleci-env
 ```
 
 ## Usage
+
+```sh
+$ circleci-env --help                                                                                                              (git)-[update-readme]  (m1)
+  circleci-env
+
+  circleci-env is a tool to manage CircleCI environment variables.
+
+  Commands:
+    apply       Apply CiecleCI environment variables from config files
+    export      Export CiecleCI environment variables from API
+    help        Display global or [command] help documentation
+    vault list  List all secret values
+    vault read  Read secret value
+    vault write Write secret value
+
+  Global Options:
+    -h, --help           Display help documentation
+    -v, --version        Display version information
+    -t, --trace          Display backtrace when an error occurs
+```
 
 ```rb
 $ export CIRCLECI_TOKEN='...'
@@ -165,6 +190,47 @@ $ circleci-env vault list                                                       
 === Secret Vars
 key1: value1
 key2: value2
+```
+
+## Export existing project's envvars
+
+`circleci-env` provide command to export existing project's envvars.
+Unfortunately CircleCI API returns masked value, you cannot get raw value of envars.
+So you have to update all values in config file before apply it.
+
+### Export all projects which you can access
+
+```sh
+$ circleci-env export --token CIRCLECI_TOKEN
+```
+
+### Export single project
+
+```sh
+$ circleci-env export --filter "github/username/repo" --token CIRCLECI_TOKEN
+```
+
+### Export projects which muched by by filter
+
+You can filter projects by regular expression
+
+```sh
+$ circleci-env export --filter "^github\/username\/.*$" --token CIRCLECI_TOKEN
+```
+
+### Export folder structure
+
+Export feature create a file per projects following folder structure like this:
+
+```
+|- projects
+   |- github
+      |- user
+      |  |- repo1.rb
+      |  |- repo2.rb
+      |
+      |- organization
+         |- repo3.rb
 ```
 
 ## Development
