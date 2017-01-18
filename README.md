@@ -2,6 +2,26 @@
 
 `circleci-env` is a tool to manage CircleCI Environment Variables using CircleCI API.
 
+<!-- TOC depthFrom:2 -->
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Envfile examples](#envfile-examples)
+  - [For single project](#for-single-project)
+  - [For multiple project](#for-multiple-project)
+    - [Envfile](#envfile)
+    - [For each project](#for-each-project)
+- [Secret values](#secret-values)
+  - [Project structure](#project-structure)
+  - [Write secret value](#write-secret-value)
+  - [Read secret value](#read-secret-value)
+  - [List all secret values](#list-all-secret-values)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
+<!-- /TOC -->
+
 ## Installation
 
 Add this line to your application's Gemfile:
