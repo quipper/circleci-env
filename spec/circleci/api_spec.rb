@@ -2,8 +2,31 @@ require "spec_helper"
 require "circleci/env/api"
 
 describe Circleci::Env::Api do
+  let!(:stub_connection) do
+    Faraday.new do |builder|
+      builder.response :raise_error
+      builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
+        stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar') do
+          [200, {}, JSON.generate([
+            { "name" => "KEY", "value" => "xxxxue" },
+            { "name" => "NEW_KEY", "value" => "xxxxl" }
+          ])]
+        end
+
+        stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar/KEY') do
+          [200, {}, JSON.generate({ "name" => "KEY", "value" => "xxxxue" })]
+        end
+
+        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar', { name: "NEW_KEY", value: "val" }) do
+          [200, {}, JSON.generate({ "name" => "NEW_KEY", "value" => "xxxxl" })]
+        end
+      end
+    end
+  end
+
   before do
     @api = Circleci::Env::Api.new(ENV['CIRCLECI_TOKEN'])
+    allow(@api).to receive(:conn).and_return(stub_connection) unless ENV['CIRCLE_CI']
   end
 
   describe "#list_envvars" do

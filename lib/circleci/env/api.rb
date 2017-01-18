@@ -14,6 +14,7 @@ module Circleci
         @token = token
       end
 
+      # https://circleci.com/docs/api/#list-environment-variables
       def list_envvars(project_id)
         get "/api/v1.1/project/#{project_id}/envvar"
       end
@@ -70,7 +71,8 @@ module Circleci
         rescue Faraday::Error::ConnectionFailed => e
           raise ServerError, e.message
         rescue Faraday::Error::ClientError => e
-          raise BadRequest, e.response.body if e.response.status == 400
+          p e.response
+          raise BadRequest, e.response[:body] if e.response[:status] == 400
           raise ServerError, e.message
         end
       end
