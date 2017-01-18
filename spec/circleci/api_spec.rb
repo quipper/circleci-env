@@ -6,6 +6,13 @@ describe Circleci::Env::Api do
     Faraday.new do |builder|
       builder.response :raise_error
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
+        stub.get('/api/v1.1/projects') do
+          [200, {}, JSON.generate([
+            { "vcs_type" => "github", "username" => "hakobera", "reponame" => "circleci-env-test-01" },
+            { "vcs_type" => "github", "username" => "hakobera", "reponame" => "circleci-env-test-02" },
+          ])]
+        end
+
         stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar') do
           [200, {}, JSON.generate([{ "name" => "KEY", "value" => "xxxxue" }])]
         end
@@ -48,6 +55,20 @@ describe Circleci::Env::Api do
   before do
     @api = Circleci::Env::Api.new(ENV['CIRCLECI_TOKEN'])
     allow(@api).to receive(:conn).and_return(stub_connection) if not ENV.has_key?('CIRCLECI')
+  end
+
+  describe "#list_projects" do
+    it "should get all followed projects" do
+      res = @api.list_projects
+
+      p1 = res.find{|r| r['reponame'] == 'circleci-env-test-01'}
+      expect(p1['vcs_type']).to eq 'github'
+      expect(p1['username']).to eq 'hakobera'
+
+      p2 = res.find{|r| r['reponame'] == 'circleci-env-test-02'}
+      expect(p2['vcs_type']).to eq 'github'
+      expect(p2['username']).to eq 'hakobera'
+    end
   end
 
   describe "#list_envvars" do
