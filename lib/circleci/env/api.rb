@@ -15,19 +15,27 @@ module Circleci
         @token = token
       end
 
+      # https://circleci.com/docs/api/#projects
+      def list_projects
+        get "/api/v1.1/projects"
+      end
+
       # https://circleci.com/docs/api/#list-environment-variables
       def list_envvars(project_id)
         get "/api/v1.1/project/#{project_id}/envvar"
       end
 
+      # https://circleci.com/docs/api/#get-environment-variable
       def get_envvar(project_id, name)
         get "/api/v1.1/project/#{project_id}/envvar/#{name}"
       end
 
+      # https://circleci.com/docs/api/#add-environment-variable
       def add_envvar(project_id, name, value)
         post "/api/v1.1/project/#{project_id}/envvar", { name: name, value: value }
       end
 
+      # https://circleci.com/docs/api/#delete-environment-variable
       def delete_envvar(project_id, name)
         delete "/api/v1.1/project/#{project_id}/envvar/#{name}"
       end
