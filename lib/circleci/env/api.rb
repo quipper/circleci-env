@@ -5,10 +5,11 @@ require "json"
 module Circleci
   module Env
     class Api
-      class BadRequest < StandardError; end
-      class NotFound < StandardError; end
-      class ServerError < StandardError; end
-      class TimeoutError < StandardError; end
+      class ApiError < StandardError; end
+      class BadRequest < ApiError; end
+      class NotFound < ApiError; end
+      class ServerError < ApiError; end
+      class TimeoutError < ApiError; end
 
       def initialize(token)
         @token = token
@@ -38,7 +39,7 @@ module Circleci
           builder.request :basic_auth, @token, ""
           builder.request :json
           builder.request :retry,
-            exceptions: [Faraday::Error::TimeoutError, Faraday::Error::ConnectionFailed, Faraday::Error::ClientError],
+            exceptions: [Faraday::TimeoutError, Faraday::ConnectionFailed, Faraday::ClientError],
             retry_if: ->(env, _exception) { !(400..499).include?(env.status) }
           builder.response :raise_error
           builder.response :logger if ENV['CIRCLECI_ENV_DEBUG']
@@ -62,14 +63,13 @@ module Circleci
         begin
           response = yield
           JSON.parse(response.body)
-        rescue Faraday::Error::ResourceNotFound => e
+        rescue Faraday::ResourceNotFound => e
           raise NotFound, e.message
-        rescue Faraday::Error::TimeoutError => e
-          raise Timeout, e.message
-        rescue Faraday::Error::ConnectionFailed => e
+        rescue Faraday::TimeoutError => e
+          raise TimeoutError, e.message
+        rescue Faraday::ConnectionFailed => e
           raise ServerError, e.message
-        rescue Faraday::Error::ClientError => e
-          p e.response
+        rescue Faraday::ClientError => e
           raise BadRequest, e.response[:body] if e.response[:status] == 400
           raise ServerError, e.message
         end
