@@ -58,8 +58,6 @@ module Circleci
         request { conn.delete(path, body) }
       end
 
-      private
-
       def request
         begin
           response = yield

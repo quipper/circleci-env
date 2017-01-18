@@ -20,6 +20,10 @@ describe Circleci::Env::Api do
         stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar', { name: "NEW_KEY", value: "val" }) do
           [200, {}, JSON.generate({ "name" => "NEW_KEY", "value" => "xxxxl" })]
         end
+
+        stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar/NEW_KEY') do
+          [200, {}, JSON.generate({ "message" => "ok" })]
+        end
       end
     end
   end
@@ -50,6 +54,13 @@ describe Circleci::Env::Api do
     it "should add single envvar of a project" do
       res = @api.add_envvar("github/hakobera/circleci-env-test-01", "NEW_KEY", "val")
       expect(res).to eq({ "name" => "NEW_KEY", "value" => "xxxxl" })
+    end
+  end
+
+  describe "#delete_envvar" do
+    it "shuold delete single envar of a project" do
+      res = @api.delete_envvar("github/hakobera/circleci-env-test-01", "NEW_KEY")
+      expect(res).to eq({ "message" => "ok" })
     end
   end
 end
