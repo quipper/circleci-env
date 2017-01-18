@@ -1,4 +1,5 @@
 require "spec_helper"
+require "circleci/env/dsl/project"
 
 describe Circleci::Env::DSL::Project do
   describe "#id" do

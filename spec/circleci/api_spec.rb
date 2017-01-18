@@ -1,4 +1,5 @@
 require "spec_helper"
+require "circleci/env/api"
 
 describe Circleci::Env::Api do
   before do

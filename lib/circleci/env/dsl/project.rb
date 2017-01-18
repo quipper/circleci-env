@@ -1,5 +1,5 @@
-require_relative "./envvar"
-require "circleci/env/application"
+require "circleci/env"
+require "circleci/env/dsl/envvar"
 
 module Circleci
   module Env
@@ -26,7 +26,7 @@ module Circleci
         end
 
         def secret(name)
-          Circleci::Env::Application.instance.secret(name)
+          Circleci::Env.app.secret(name)
         end
 
         def to_s
