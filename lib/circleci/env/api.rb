@@ -5,6 +5,11 @@ require "json"
 module Circleci
   module Env
     class Api
+      class BadRequest < StandardError; end
+      class NotFound < StandardError; end
+      class ServerError < StandardError; end
+      class TimeoutError < StandardError; end
+
       def initialize(token)
         @token = token
       end
@@ -29,37 +34,44 @@ module Circleci
 
       def conn
         @conn ||= Faraday.new(url: "https://circleci.com") do |builder|
-          builder.request  :basic_auth, @token, ""
-          builder.request  :json
+          builder.request :basic_auth, @token, ""
+          builder.request :json
+          builder.request :retry,
+            exceptions: [Faraday::Error::TimeoutError, Faraday::Error::ConnectionFailed, Faraday::Error::ClientError],
+            retry_if: ->(env, _exception) { !(400..499).include?(env.status) }
+          builder.response :raise_error
           builder.response :logger if ENV['CIRCLECI_ENV_DEBUG']
-          builder.adapter  Faraday.default_adapter
+          builder.adapter Faraday.default_adapter
         end
       end
 
       def get(path)
-        response = conn.get(path)
-        if response.success?
-          JSON.parse(response.body)
-        else
-          nil
-        end
+        request { conn.get(path) }
       end
 
       def post(path, body)
-        response = conn.post(path, body)
-        if response.success?
-          JSON.parse(response.body)
-        else
-          nil
-        end
+        request { conn.post(path, body) }
       end
 
       def delete(path, body=nil)
-        response = conn.delete(path, body)
-        if response.success?
+        request { conn.delete(path, body) }
+      end
+
+      private
+
+      def request
+        begin
+          response = yield
           JSON.parse(response.body)
-        else
-          nil
+        rescue Faraday::Error::ResourceNotFound => e
+          raise NotFound, e.message
+        rescue Faraday::Error::TimeoutError => e
+          raise Timeout, e.message
+        rescue Faraday::Error::ConnectionFailed => e
+          raise ServerError, e.message
+        rescue Faraday::Error::ClientError => e
+          raise BadRequest, e.response.body if e.response.status == 400
+          raise ServerError, e.message
         end
       end
     end
