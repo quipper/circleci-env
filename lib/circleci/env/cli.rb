@@ -1,5 +1,6 @@
 require "commander"
 require "circleci/env/command/apply_command"
+require "circleci/env/command/export_command"
 require "circleci/env/command/vault/list_command"
 require "circleci/env/command/vault/read_command"
 require "circleci/env/command/vault/write_command"
@@ -42,6 +43,20 @@ module Circleci
               raise 'You need to set TOKEN'
             end
             Command::ApplyCommand.new(options).run
+          end
+        end
+
+        command :export do |c|
+          c.syntax = "circleci-env export [options]"
+          c.description = "Export CiecleCI environment variables from API"
+          c.option "--token TOKEN", String, "CircleCI API token"
+          c.action do |args, options|
+            options.default token: ENV['CIRCLECI_TOKEN']
+            if options.token.nil?
+              command(:help).run(['export'])
+              raise 'You need to set TOKEN'
+            end
+            Command::ExportCommand.new(options).run
           end
         end
 
