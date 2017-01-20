@@ -23,6 +23,7 @@ module Circleci
 
         def env(key_values)
           key_values.each do |key, value|
+            raise DSLError.new("nil is not allowed for #{key} in #{id}") if value.nil?
             envvars << Envvar.new(key, value)
           end
         end
