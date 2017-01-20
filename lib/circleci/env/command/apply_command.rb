@@ -67,7 +67,7 @@ module Circleci
             tmpl = "  ~ update #{envvar.name}=#{envvar.value.to_s}"
             # CircleCI masked value prefix is 'xxxx', so remove it.
             current_suffix = current_envvars[envvar.name][CIRCLECI_MASK_PREFIX.length..-1]
-            if envvar.value.end_with?(current_suffix)
+            if !current_suffix.empty? && envvar.value.end_with?(current_suffix)
               msg = "#{tmpl} (suffix matches current value)".light_blue
             else
               msg = tmpl.yellow
