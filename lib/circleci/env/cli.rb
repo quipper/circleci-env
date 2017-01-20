@@ -3,6 +3,7 @@ require "circleci/env/command/apply_command"
 require "circleci/env/command/export_command"
 require "circleci/env/command/vault/list_command"
 require "circleci/env/command/vault/read_command"
+require "circleci/env/command/vault/rekey_command"
 require "circleci/env/command/vault/write_command"
 
 module Circleci
@@ -99,7 +100,19 @@ module Circleci
           end
         end
 
-        #never_trace!
+        command :'vault rekey' do |c|
+          c.syntax = "circleci-env vault rekey"
+          c.description = "Change password of all secret values"
+          c.action do |args, options|
+            current_password = ask("Current Password: ") { |q| q.echo = "*" }
+            new_password = ask("New Password: ") { |q| q.echo = "*" }
+            Command::Vault::RekeyCommand.new(
+              current_password: current_password,
+              new_password: new_password
+            ).run
+          end
+        end
+
         run!
       end
     end
