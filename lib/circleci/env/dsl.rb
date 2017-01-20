@@ -3,6 +3,8 @@ require "circleci/env/dsl/project"
 module Circleci
   module Env
     module DSL
+      class DSLError < StandardError; end
+
       def project(id, &block)
         proj = Project.define(id)
         proj.instance_eval(&block)
