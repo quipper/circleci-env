@@ -16,7 +16,7 @@ module Circleci
 
           def run
             FileUtils.mkdir_p(File.dirname(secret_file_path(@name)))
-            puts "Write secret value to #{secret_file_path(@name)}"
+            puts "Write secret variable to #{secret_file_path(@name)}"
             write(@name, @value, @password)
           end
         end

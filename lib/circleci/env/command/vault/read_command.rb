@@ -13,7 +13,7 @@ module Circleci
           end
 
           def run
-            puts "Read secret value from #{secret_file_path(@name)}"
+            puts "Read secret variable from #{secret_file_path(@name)}"
             puts read(@name, @password)
           end
         end
