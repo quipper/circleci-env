@@ -12,7 +12,7 @@ module Circleci
           end
 
           def run
-            puts "=== Secret Vars".light_blue
+            puts "=== Secret Variables".light_blue
             max_len = 0
             vars = []
 
