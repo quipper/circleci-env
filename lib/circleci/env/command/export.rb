@@ -7,7 +7,7 @@ require "fileutils"
 module Circleci
   module Env
     module Command
-      class ExportCommand
+      class Export
         def initialize(options)
           @options = options
         end

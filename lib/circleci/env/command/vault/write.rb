@@ -5,7 +5,7 @@ module Circleci
   module Env
     module Command
       module Vault
-        class WriteCommand
+        class Write
           include Circleci::Env::Vault
 
           def initialize(name:, value:, password:)

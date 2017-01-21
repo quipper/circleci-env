@@ -7,7 +7,7 @@ require "colorize"
 module Circleci
   module Env
     module Command
-      class ApplyCommand
+      class Apply
         include Circleci::Env::Vault
 
         CIRCLECI_MASK_PREFIX = 'xxxx'

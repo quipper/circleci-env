@@ -4,7 +4,7 @@ module Circleci
   module Env
     module Command
       module Vault
-        class RekeyCommand
+        class Rekey
           include Circleci::Env::Vault
 
           def initialize(current_password:, new_password:)

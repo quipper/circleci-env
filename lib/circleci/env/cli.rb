@@ -1,10 +1,10 @@
 require "commander"
-require "circleci/env/command/apply_command"
-require "circleci/env/command/export_command"
-require "circleci/env/command/vault/list_command"
-require "circleci/env/command/vault/read_command"
-require "circleci/env/command/vault/rekey_command"
-require "circleci/env/command/vault/write_command"
+require "circleci/env/command/apply"
+require "circleci/env/command/export"
+require "circleci/env/command/vault/list"
+require "circleci/env/command/vault/read"
+require "circleci/env/command/vault/rekey"
+require "circleci/env/command/vault/write"
 
 module Circleci
   module Env
@@ -43,7 +43,7 @@ module Circleci
               command(:help).run(['apply'])
               raise 'You need to set TOKEN'
             end
-            Command::ApplyCommand.new(options).run
+            Command::Apply.new(options).run
           end
         end
 
@@ -59,7 +59,7 @@ module Circleci
               command(:help).run(['export'])
               raise 'You need to set TOKEN'
             end
-            Command::ExportCommand.new(options).run
+            Command::Export.new(options).run
           end
         end
 
@@ -69,7 +69,7 @@ module Circleci
           c.option "--password-file PASSWORD_FILE", String, "Specify password file"
           c.description = "Write secret variable"
           c.action do |args, options|
-            Command::Vault::WriteCommand.new(
+            Command::Vault::Write.new(
               password: fetch_password(options),
               name: args.first,
               value: args.last
@@ -83,7 +83,7 @@ module Circleci
           c.option "--password-file PASSWORD_FILE", String, "Specify password file"
           c.description = "Read secret variable"
           c.action do |args, options|
-            Command::Vault::ReadCommand.new(
+            Command::Vault::Read.new(
               password: fetch_password(options),
               name: args.first
             ).run
@@ -96,7 +96,7 @@ module Circleci
           c.description = "List all secret variables"
           c.action do |args, options|
             passwd = fetch_password(options)
-            Command::Vault::ListCommand.new(
+            Command::Vault::List.new(
               password: passwd
             ).run
           end
@@ -108,7 +108,7 @@ module Circleci
           c.action do |args, options|
             current_password = ask("Current Password: ") { |q| q.echo = "*" }
             new_password = ask("New Password: ") { |q| q.echo = "*" }
-            Command::Vault::RekeyCommand.new(
+            Command::Vault::Rekey.new(
               current_password: current_password,
               new_password: new_password
             ).run

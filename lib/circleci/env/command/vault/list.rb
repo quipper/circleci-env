@@ -4,7 +4,7 @@ module Circleci
   module Env
     module Command
       module Vault
-        class ListCommand
+        class List
           include Circleci::Env::Vault
 
           def initialize(password:)

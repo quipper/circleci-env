@@ -4,7 +4,7 @@ module Circleci
   module Env
     module Command
       module Vault
-        class ReadCommand
+        class Read
           include Circleci::Env::Vault
 
           def initialize(name:, password:)
