@@ -16,6 +16,7 @@
   - [Write secret variable](#write-secret-variable)
   - [Read secret variable](#read-secret-variable)
   - [List all secret variables](#list-all-secret-variables)
+  - [Change password](#change-password)
 - [Export existing project's envvars](#export-existing-projects-envvars)
   - [Export all projects which you can access](#export-all-projects-which-you-can-access)
   - [Export single project](#export-single-project)
@@ -202,6 +203,20 @@ $ circleci-env vault list                                                       
 === Secret Vars
 key1: value1
 key2: value2
+```
+
+### Change password
+
+To change password of all secret variables, use `vault rekey` command.
+
+```sh
+$ circleci-env vault rekey
+Current Password: ***
+New Password: ***
+
+=== Rekey Secret Variables
+Rekey key1
+Rekey key2
 ```
 
 ## Export existing project's envvars
