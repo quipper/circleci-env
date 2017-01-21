@@ -3,8 +3,6 @@ require "ansible/vault"
 module Circleci
   module Env
     module Vault
-      SECRET_DIR = "secret"
-
       class SecretString < String
         def to_s
           "xxxx#{self[-1]}"
@@ -15,8 +13,12 @@ module Circleci
         end
       end
 
+      def secret_dir
+        "secret"
+      end
+
       def secret_file_path(name)
-        "#{SECRET_DIR}/#{name}.vault"
+        "#{secret_dir}/#{name}.vault"
       end
 
       def read(name, password)
@@ -28,9 +30,9 @@ module Circleci
       end
 
       def secrets(password)
-        Dir.glob("secret/*.vault") do |file|
+        Dir.glob("#{secret_dir}/*.vault") do |file|
           name = File.basename(file, ".vault")
-          contents = Ansible::Vault.read(path: secret_file_path(name), password: password)
+          contents = Ansible::Vault.read(path: file, password: password)
           yield(name, SecretString.new(contents))
         end
       end

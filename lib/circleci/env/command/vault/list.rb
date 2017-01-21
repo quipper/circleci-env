@@ -1,4 +1,5 @@
 require "circleci/env/vault"
+require "colorize"
 
 module Circleci
   module Env
