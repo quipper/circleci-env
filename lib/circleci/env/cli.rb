@@ -104,7 +104,7 @@ module Circleci
 
         command :'vault rekey' do |c|
           c.syntax = "circleci-env vault rekey"
-          c.description = "Change password of all secret values"
+          c.description = "Change password of all secret variables"
           c.action do |args, options|
             current_password = ask("Current Password: ") { |q| q.echo = "*" }
             new_password = ask("New Password: ") { |q| q.echo = "*" }

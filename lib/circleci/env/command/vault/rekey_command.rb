@@ -14,7 +14,7 @@ module Circleci
 
           def run
             puts ""
-            puts "=== Rekey Secret Vars".light_blue
+            puts "=== Rekey Secret Variables".light_blue
             secrets(@current_password) do |name, contents|
               puts "Rekey #{name}"
               write(name, contents.to_str, @new_password)
