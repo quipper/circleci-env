@@ -8,15 +8,17 @@ module Circleci
   module Env
     module Command
       class Export
-        def initialize(options)
-          @options = options
+        def initialize(token:, filter: nil, ignore_empty: false)
+          @token = token
+          @filter = filter
+          @ignore_empty = ignore_empty
         end
 
         def run
           api.list_projects.each do |project|
+            next if @filter && !id(project).match(Regexp.new(@filter))
             envvars = api.list_envvars(id(project))
-            next if @options.ignore_empty && envvars.empty?
-            next if @options.filter && !id(project).match(Regexp.new(@options.filter))
+            next if @ignore_empty && envvars.empty?
 
             FileUtils.mkdir_p("projects/#{dir(project)}")
             File.open("projects/#{id(project)}.rb", "w") do |f|
@@ -36,7 +38,7 @@ module Circleci
         private
 
         def api
-          @api ||= Api.new(@options.token)
+          @api ||= Api.new(@token)
         end
 
         def id(project)

@@ -59,7 +59,11 @@ module Circleci
               command(:help).run(['export'])
               raise 'You need to set TOKEN'
             end
-            Command::Export.new(options).run
+            Command::Export.new(
+              token: options.token,
+              filter: options.filter,
+              ignore_empty: options.ignore_empty
+            ).run
           end
         end
 
