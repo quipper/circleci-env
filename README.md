@@ -71,10 +71,41 @@ $ circleci-env --help                                                           
 
 ```rb
 $ export CIRCLECI_TOKEN='...'
-$ vi Envfile
-$ circleci-env apply --dry-run
-$ circleci-env apply
+$ vi Envfile.rb
+$ circleci-env apply -c Envfile.rb --dry-run
+$ circleci-env apply -c Envfile.rb
 ```
+
+Command output is like this:
+
+```sh
+Load config from Envfile.rb
+Apply Envfile.rb to CircleCI
+
+=== github/username/repo1
+
+Progress: |
+  - add    KEY1=XYZ
+  - delete KEY2
+  ? update SECRET_KEY1=xxxxQ
+  ~ update KEY3=ABCDEF
+
+Result: |
+  KEY1=xxxxZ
+  SECRET_KEY1=xxxxQ
+  KEY3=xxxxEF
+```
+
+There are 4 progress statuses
+
+- `+ add`: Add new environment variable
+- `- delete`: Delete existing environment variable
+- `? update`: Suffix matches current value. Maybe value is not update.
+- `~ update`: Update existing environment variable
+
+`? update` is tricky status, but it's depends on CircleCI REST API specification.
+CircleCI REST API return only masked value (show few character of raw value),
+so we cannot match exactly between current and new values.
 
 ## Envfile examples
 
