@@ -51,8 +51,8 @@ describe Circleci::Env::Vault do
     describe "#secrets" do
       it "should read all secret files" do
         allow(Dir).to receive(:glob)
-                      .and_yield("spec/secret/name1.vault")
-                      .and_yield("spec/secret/name2.vault")
+                      .and_yield("spec/data/secret/name1.vault")
+                      .and_yield("spec/data/secret/name2.vault")
 
         results = []
         secrets("password") do |name, value|

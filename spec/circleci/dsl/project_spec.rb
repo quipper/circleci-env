@@ -6,6 +6,8 @@ describe Circleci::Env::DSL::Project do
 
   describe "#projects" do
     it "shuoud add project for each call `define` method" do
+      Circleci::Env::DSL::Project.projects = []
+
       expect {
         Circleci::Env::DSL::Project.define("vcs_type/username/repo1")
       }.to change{ Circleci::Env::DSL::Project.projects.count }.from(0).to(1)

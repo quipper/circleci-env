@@ -43,7 +43,12 @@ module Circleci
               command(:help).run(['apply'])
               raise 'You need to set TOKEN'
             end
-            Command::Apply.new(options).run
+            Command::Apply.new(
+              config: options.config,
+              token: options.token,
+              password: options.password,
+              dry_run: options.dry_run
+            ).run
           end
         end
 

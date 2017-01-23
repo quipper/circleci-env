@@ -17,6 +17,10 @@ module Circleci
           @@projects
         end
 
+        def self.projects=(projects)
+          @@projects = projects
+        end
+
         def id
           "#{vcs_type}/#{username}/#{repository}"
         end
