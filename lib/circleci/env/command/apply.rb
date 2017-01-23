@@ -64,13 +64,15 @@ module Circleci
           end
 
           update_envvars.each do |envvar|
-            tmpl = "  ~ update #{envvar.name}=#{envvar.value.to_s}"
+            prefix = "  ~"
+            msg_tmpl = "update #{envvar.name}=#{envvar.value.to_s}"
             # CircleCI masked value prefix is 'xxxx', so remove it.
             current_suffix = current_envvars[envvar.name][CIRCLECI_MASK_PREFIX.length..-1]
             if !current_suffix.empty? && envvar.value.end_with?(current_suffix)
-              msg = "#{tmpl} (suffix matches current value)".light_blue
+              prefix = "  ?"
+              msg = "#{prefix} #{msg_tmpl}".light_blue
             else
-              msg = tmpl.yellow
+              msg = "#{prefix} #{msg_tmpl}".yellow
             end
             puts msg
             api.add_envvar(project.id, envvar.name, envvar.value.to_str) unless dry_run?
