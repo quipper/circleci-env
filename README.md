@@ -11,11 +11,12 @@
   - [For multiple project](#for-multiple-project)
     - [Envfile](#envfile)
     - [For each project](#for-each-project)
-- [Secret values](#secret-values)
+- [Secret variables](#secret-variables)
   - [Project structure](#project-structure)
-  - [Write secret value](#write-secret-value)
-  - [Read secret value](#read-secret-value)
-  - [List all secret values](#list-all-secret-values)
+  - [Write secret variable](#write-secret-variable)
+  - [Read secret variable](#read-secret-variable)
+  - [List all secret variables](#list-all-secret-variables)
+  - [Change password](#change-password)
 - [Export existing project's envvars](#export-existing-projects-envvars)
   - [Export all projects which you can access](#export-all-projects-which-you-can-access)
   - [Export single project](#export-single-project)
@@ -59,9 +60,9 @@ $ circleci-env --help                                                           
     apply       Apply CiecleCI environment variables from config files
     export      Export CiecleCI environment variables from API
     help        Display global or [command] help documentation
-    vault list  List all secret values
-    vault read  Read secret value
-    vault write Write secret value
+    vault list  List all secret variables
+    vault read  Read secret variable
+    vault write Write secret variable
 
   Global Options:
     -h, --help           Display help documentation
@@ -170,13 +171,12 @@ end
 
 You can see real example in [examples](./examples) folder.
 
-## Secret values
+## Secret variables
 
 `circleci-env` support vault feature to manage secret values like API key.
+You can read/write encrypted secret value and refer it as variable in `Envfile.rb`.
 
 ### Project structure
-
-All secret value files include one directory named `secret` like this:
 
 ```
 |- Envfile
@@ -186,8 +186,10 @@ All secret value files include one directory named `secret` like this:
    |- ...
 ```
 
-For each file, it must include one secret value and has `.vault` extention.
-In `Envfile`, you can refer these values by filename without extention.
+All secret variables are stored in file in directory named `secret`.
+Each file include value of secret varaiable and must have `.vault` file extention.
+
+In `Envfile.rb`, you can refer these variables by filename without extention using `secret` method.
 For example, you can refer secret value in `secrete_key.vault` like:
 
 ```rb
@@ -199,20 +201,20 @@ project "github/user/repo1" do
 end
 ```
 
-### Write secret value
+### Write secret variable
 
-Run following command:
+To encrypt secret variable and write it to file, use `valut write` command.
 
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
 $ circleci-env vault write secret_key "Some secret value"
 ```
 
-This command create a file named `secret_key.valut` in `secret` directory.
+This command encrypt values and write it into a file named `secret_key.valut` in `secret` directory.
 
-### Read secret value
+### Read secret variable
 
-Run following command:
+To decrypt secret variable from, use `valut read` command.
 
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
@@ -220,9 +222,11 @@ $ circleci-env vault read secret_key
 #=> "Some secret value"
 ```
 
-This command read a secret value from `secret_key.valut` in `secret` directory.
+This command read a secret varable from `secret_key.valut` in `secret` directory.
 
-### List all secret values
+### List all secret variables
+
+To list all secret variables, use `vault list` command.
 
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
@@ -230,6 +234,20 @@ $ circleci-env vault list                                                       
 === Secret Vars
 key1: value1
 key2: value2
+```
+
+### Change password
+
+To change password of all secret variables, use `vault rekey` command.
+
+```sh
+$ circleci-env vault rekey
+Current Password: ***
+New Password: ***
+
+=== Rekey Secret Variables
+Rekey key1
+Rekey key2
 ```
 
 ## Export existing project's envvars
@@ -241,13 +259,13 @@ So you have to update all values in config file before apply it.
 ### Export all projects which you can access
 
 ```sh
-$ circleci-env export --token CIRCLECI_TOKEN
+$ circleci-env export
 ```
 
 ### Export single project
 
 ```sh
-$ circleci-env export --filter "github/username/repo" --token CIRCLECI_TOKEN
+$ circleci-env export --filter "github/username/repo"
 ```
 
 ### Export projects which muched by by filter
@@ -255,7 +273,7 @@ $ circleci-env export --filter "github/username/repo" --token CIRCLECI_TOKEN
 You can filter projects by regular expression
 
 ```sh
-$ circleci-env export --filter "^github\/username\/.*$" --token CIRCLECI_TOKEN
+$ circleci-env export --filter "^github\/username\/.*$"
 ```
 
 ### Export folder structure
@@ -281,7 +299,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/hakobera/circleci-env.
+Bug reports and pull requests are welcome on GitHub at https://github.com/quipper/circleci-env.
 
 ## License
 
