@@ -7,23 +7,26 @@ require "colorize"
 module Circleci
   module Env
     module Command
-      class ApplyCommand
+      class Apply
         include Circleci::Env::Vault
 
         CIRCLECI_MASK_PREFIX = 'xxxx'
 
-        def initialize(options)
-          @options = options
+        def initialize(config:, token:, password:, dry_run: false)
+          @config = config
+          @token = token
+          @password = password
+          @dry_run = dry_run
         end
 
         def run
-          secrets(@options.password) do |name, contents|
+          secrets(@password) do |name, contents|
             Circleci::Env.app.add_secret(name, contents)
           end
 
-          load_config(@options.config)
+          load_config(@config)
 
-          puts "Apply #{@options.config} to CircleCI #{dry_run? ? '(dry-run)' : ''}"
+          puts "Apply #{@config} to CircleCI#{dry_run? ? ' (dry-run)' : ''}"
           DSL::Project::projects.each do |proj|
             apply(proj)
           end
@@ -91,11 +94,11 @@ module Circleci
         end
 
         def api
-          @api ||= Api.new(@options.token)
+          @api ||= Api.new(@token)
         end
 
         def dry_run?
-          @options.dry_run
+          @dry_run
         end
       end
     end

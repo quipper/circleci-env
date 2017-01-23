@@ -8,6 +8,7 @@
 /spec/reports/
 /tmp/
 /secret/
+/projects/
 .ruby-version
 .env
 .passwd

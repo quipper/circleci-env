@@ -1,10 +1,11 @@
 require "circleci/env/vault"
+require "colorize"
 
 module Circleci
   module Env
     module Command
       module Vault
-        class ListCommand
+        class List
           include Circleci::Env::Vault
 
           def initialize(password:)
