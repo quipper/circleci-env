@@ -33,6 +33,22 @@ describe Circleci::Env::Command::Apply do
     end
   end
 
+  context "config load error" do
+    describe "config not found" do
+      it "should raise LoadError" do
+        cmd = Circleci::Env::Command::Apply.new(config: 'not_found', token: 'token', password: 'pass')
+        expect{ cmd.run }.to raise_error(LoadError)
+      end
+    end
+
+    describe "config has syntax error" do
+      it "should raise error" do
+        cmd = Circleci::Env::Command::Apply.new(config: 'spec/data/Envfile_invalid.rb', token: 'token', password: 'pass')
+        expect{ cmd.run }.to raise_error(SyntaxError)
+      end
+    end
+  end
+
   context "not dry run" do
     let(:cmd) { Circleci::Env::Command::Apply.new(config: 'spec/data/Envfile.rb', token: 'token', password: 'pass') }
 
