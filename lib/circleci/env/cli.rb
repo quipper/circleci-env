@@ -74,6 +74,7 @@ module Circleci
 
         command :'vault write' do |c|
           c.syntax = "circleci-env vault write [options] <name> <value>"
+          c.option "--input-file INPUT_FILE", String, "Specify input file"
           c.option "-p", "--password PASSWORD", String, "Specify password"
           c.option "--password-file PASSWORD_FILE", String, "Specify password file"
           c.description = "Write secret variable"
@@ -81,7 +82,7 @@ module Circleci
             Command::Vault::Write.new(
               password: fetch_password(options),
               name: args.first,
-              value: args.last
+              value: args[1] || File.read(options.input_file)
             ).run
           end
         end

@@ -210,6 +210,13 @@ $ export CIRCLECI_ENV_PASSWORD=xxx
 $ circleci-env vault write secret_key "Some secret value"
 ```
 
+To write secret variable via file, use `--input-file` option.
+
+```sh
+$ export CIRCLECI_ENV_PASSWORD=xxx
+$ circleci-env vault write secret_key --input-file secret_file
+```
+
 This command encrypt values and write it into a file named `secret_key.valut` in `secret` directory.
 
 ### Read secret variable
