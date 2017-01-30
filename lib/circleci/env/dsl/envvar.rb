@@ -9,6 +9,10 @@ module Circleci
           @value = value
         end
 
+        def changed?(current_suffix)
+          current_suffix.empty? || !value.end_with?(current_suffix)
+        end
+
         def to_s
           "Envvar(#{name}=#{value})"
         end
