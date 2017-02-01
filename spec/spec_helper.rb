@@ -14,3 +14,18 @@ end
 
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "circleci/env"
+
+require "faraday"
+
+# Override delete method because CircleCI needs body
+module Faraday
+  class Adapter
+    class Test < Faraday::Adapter
+      class Stubs
+        def delete(path, body=nil, headers = {}, &block)
+          new_stub(:delete, path, headers, body, &block)
+        end
+      end
+    end
+  end
+end

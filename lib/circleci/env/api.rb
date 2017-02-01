@@ -40,6 +40,16 @@ module Circleci
         delete "/api/v1.1/project/#{project_id}/envvar/#{name}"
       end
 
+      # https://circleci.com/docs/api/#ssh-keys
+      def add_ssh_key(project_id, hostname, private_key)
+        post "/api/v1.1/project/#{project_id}/ssh-key", { hostname: hostname, private_key: private_key }
+      end
+
+      # This API is undocumented by we can use it
+      def delete_ssh_key(project_id, hostname, fingerprint)
+        delete "/api/v1.1/project/#{project_id}/ssh-key", { hostname: hostname, fingerprint: fingerprint }
+      end
+
       private
 
       def conn
@@ -64,13 +74,15 @@ module Circleci
       end
 
       def delete(path, body=nil)
-        request { conn.delete(path, body) }
+        request { conn.delete(path) {|req| req.body = body if !body.nil?} }
       end
 
       def request
         begin
           response = yield
           JSON.parse(response.body)
+        rescue JSON::ParserError
+          response.body
         rescue Faraday::ResourceNotFound => e
           raise NotFound, e.message
         rescue Faraday::TimeoutError => e
