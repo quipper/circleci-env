@@ -133,15 +133,27 @@ describe Circleci::Env::Api do
 
   describe "#add_ssh_key" do
     it "should add ssh key of a project" do
-      res = @api.add_ssh_key("github/hakobera/circleci-env-test-01", "host1.example.com", ssh_key.private_key)
+      hostname = "host1.example.com"
+      res = @api.add_ssh_key("github/hakobera/circleci-env-test-01", hostname, ssh_key.private_key)
       expect(res).to eq("")
+
+      if ENV['CIRCLECI']
+        settings = @api.get_settings("github/hakobera/circleci-env-test-01")
+        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname}.first['fingerprint']).to eq ssh_key.md5_fingerprint
+      end
     end
   end
 
   describe "#delete_ssh_key" do
     it "should delete ssh key of a project" do
-      res = @api.delete_ssh_key("github/hakobera/circleci-env-test-01", "host1.example.com", ssh_key.md5_fingerprint)
+      hostname = "host1.example.com"
+      res = @api.delete_ssh_key("github/hakobera/circleci-env-test-01", hostname, ssh_key.md5_fingerprint)
       expect(res).to eq("")
+
+      if ENV['CIRCLECI']
+        settings = @api.get_settings("github/hakobera/circleci-env-test-01")
+        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname && k["fingerprint"] == ssh_key.md5_fingerprint}).to be_empty
+      end
     end
   end
 end
