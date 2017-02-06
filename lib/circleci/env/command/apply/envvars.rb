@@ -11,6 +11,13 @@ module Circleci
           update_envvars(project)
         end
 
+        def show_envvars(project)
+          puts "envvars:"
+          api.list_envvars(project.id).each do |envvar|
+            puts "  #{envvar['name']}=#{envvar['value']}"
+          end
+        end
+
         private
 
         def current_envvars(project)

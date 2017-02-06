@@ -4,6 +4,7 @@ require "circleci/env/command/apply"
 describe Circleci::Env::Command::Apply do
   before do
     Circleci::Env::DSL::Project.projects = []
+    @first_call = true
   end
 
   let(:ssh_key1) { ::SSHKey.generate }
@@ -54,12 +55,22 @@ describe Circleci::Env::Command::Apply do
         end
 
         stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/settings') do
-          [200, {}, JSON.generate({
+          if @first_call
+            @first_call = false
+            [200, {}, JSON.generate({
                       "ssh_keys" => [
                         { "hostname" => "test1.example.com", "fingerprint" => ssh_key1.md5_fingerprint },
                         { "hostname" => "test2.example.com", "fingerprint" => ssh_key2.md5_fingerprint },
                         { "hostname" => "test4.example.com", "fingerprint" => ssh_key1.md5_fingerprint },
                       ]})]
+          else
+             [200, {}, JSON.generate({
+                      "ssh_keys" => [
+                        { "hostname" => "test1.example.com", "fingerprint" => ssh_key1.md5_fingerprint },
+                        { "hostname" => "test3.example.com", "fingerprint" => ssh_key3.md5_fingerprint },
+                        { "hostname" => "test4.example.com", "fingerprint" => ssh_key4.md5_fingerprint },
+                      ]})]
+          end
         end
       end
     end
@@ -119,9 +130,14 @@ ssh_keys:
 \e[0;33;49m  ~ update test4.example.com=#{ssh_key1.md5_fingerprint} => #{ssh_key4.md5_fingerprint}\e[0m
 
 Result: |
+envvars:
   KEY1=xxxxue0
   KEY3=xxxxue2
   KEY4=xxxxue4
+ssh_keys:
+  test1.example.com=#{ssh_key1.md5_fingerprint}
+  test3.example.com=#{ssh_key3.md5_fingerprint}
+  test4.example.com=#{ssh_key4.md5_fingerprint}
 EOS
         expect{ cmd.run }.to output(result).to_stdout
       end

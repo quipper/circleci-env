@@ -58,10 +58,8 @@ module Circleci
         def show_result(project)
           puts ""
           puts "Result: |"
-
-          api.list_envvars(project.id).each do |envvar|
-            puts "  #{envvar['name']}=#{envvar['value']}"
-          end
+          show_envvars(project)
+          show_ssh_keys(project)
         end
 
         def api

@@ -123,6 +123,9 @@ envvars:
   KEY1=xxxxZ
   SECRET_KEY1=xxxxQ
   KEY3=xxxxEF
+ssh_keys:
+  test1.example.com=<ssh key fingerprint>
+  test3.example.com=<ssh key fingerprint>
 ```
 
 There are 4 progress statuses

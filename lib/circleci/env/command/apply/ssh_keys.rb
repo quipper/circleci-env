@@ -13,6 +13,13 @@ module Circleci
           end
         end
 
+        def show_ssh_keys(project)
+          puts "ssh_keys:"
+          api.get_settings(project.id)['ssh_keys'].each do |ssh_key|
+            puts "  #{ssh_key['hostname']}=#{ssh_key['fingerprint']}"
+          end
+        end
+
         private
 
         def current_ssh_keys(project)
