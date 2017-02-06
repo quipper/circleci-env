@@ -1,10 +1,11 @@
 # circleci-env
 
-`circleci-env` is a tool to manage CircleCI Environment Variables using CircleCI API.
+`circleci-env` is a tool to manage CircleCI Environment Variables and Settings using CircleCI API.
 
 <!-- TOC depthFrom:2 -->
 
 - [Installation](#installation)
+- [Supported Settings](#supported-settings)
 - [Usage](#usage)
 - [Envfile examples](#envfile-examples)
   - [For single project](#for-single-project)
@@ -48,6 +49,11 @@ Or install it yourself as:
 $ gem install circleci-env
 ```
 
+## Supported Settings
+
+- [Environment Variables](https://circleci.com/docs/environment-variables/#setting-environment-variables-for-all-commands-without-adding-them-to-git)
+- [SSH Keys](https://circleci.com/docs/api/#ssh-keys)
+
 ## Usage
 
 ```sh
@@ -70,11 +76,27 @@ $ circleci-env --help                                                           
     -t, --trace          Display backtrace when an error occurs
 ```
 
-```rb
+```sh
 $ export CIRCLECI_TOKEN='...'
 $ vi Envfile.rb
 $ circleci-env apply -c Envfile.rb --dry-run
 $ circleci-env apply -c Envfile.rb
+```
+
+Envfile.rb is like this:
+
+```rb
+project "github/username/repot-01" do
+  env(
+    "KEY1" => "XYZ",
+    "KEY3" => "ABCDEF",
+    "SECRET_KEY1" => secret("secret_key1")
+  )
+  ssh_key(
+    "test1.example.com" => secret("ssh_key1"),
+    "test3.example.com" => secret("ssh_key3"),
+  )
+end
 ```
 
 Command output is like this:
@@ -86,12 +108,18 @@ Apply Envfile.rb to CircleCI
 === github/username/repo1
 
 Progress: |
-  - add    KEY1=XYZ
+envvars:
+  + add    KEY1=XYZ
   - delete KEY2
   ? update SECRET_KEY1=xxxxQ
   ~ update KEY3=ABCDEF
+ssh_keys:
+  + add    test1.example.com=<ssh key fingerprint>
+  - delete test2.example.com=<ssh key fingerprint>
+  ~ update test3.example.com=<ssh key fingerprint>
 
 Result: |
+envvars:
   KEY1=xxxxZ
   SECRET_KEY1=xxxxQ
   KEY3=xxxxEF
@@ -197,6 +225,10 @@ project "github/user/repo1" do
   env(
     "NORMAL_KEY" => "value1",
     "SECRET_KEY" => secret("secret_key")
+  )
+  ssh_key(
+    "host1.example.com" => secret("sshkey-host1-example-com"),
+    "host2.example.com" => secret("sshkey-host2-example-com"),
   )
 end
 ```
