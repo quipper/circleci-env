@@ -2,6 +2,8 @@ require "faraday"
 require "faraday_middleware"
 require "json"
 
+require_relative "../../net/http/delete"
+
 module Circleci
   module Env
     class Api
@@ -40,6 +42,21 @@ module Circleci
         delete "/api/v1.1/project/#{project_id}/envvar/#{name}"
       end
 
+      # https://circleci.com/docs/api/#ssh-keys
+      def add_ssh_key(project_id, hostname, private_key)
+        post "/api/v1.1/project/#{project_id}/ssh-key", { hostname: hostname, private_key: private_key }
+      end
+
+      # This API is undocumented by we can use it
+      def delete_ssh_key(project_id, hostname, fingerprint)
+        delete "/api/v1.1/project/#{project_id}/ssh-key", { hostname: hostname, fingerprint: fingerprint }
+      end
+
+      # This API is undocumented by we can use it
+      def get_settings(project_id)
+        get "/api/v1.1/project/#{project_id}/settings"
+      end
+
       private
 
       def conn
@@ -51,7 +68,7 @@ module Circleci
             retry_if: ->(env, _exception) { !(400..499).include?(env.status) }
           builder.response :raise_error
           builder.response :logger if ENV['CIRCLECI_ENV_DEBUG']
-          builder.adapter Faraday.default_adapter
+          builder.adapter :net_http
         end
       end
 
@@ -64,13 +81,15 @@ module Circleci
       end
 
       def delete(path, body=nil)
-        request { conn.delete(path, body) }
+        request { conn.delete(path) {|req| req.body = body unless body.nil?} }
       end
 
       def request
         begin
           response = yield
           JSON.parse(response.body)
+        rescue JSON::ParserError
+          response.body
         rescue Faraday::ResourceNotFound => e
           raise NotFound, e.message
         rescue Faraday::TimeoutError => e

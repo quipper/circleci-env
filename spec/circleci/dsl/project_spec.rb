@@ -1,5 +1,6 @@
 require "spec_helper"
 require "circleci/env/dsl/project"
+require "sshkey"
 
 describe Circleci::Env::DSL::Project do
   let(:project) { Circleci::Env::DSL::Project.define("vcs_type/username/repository") }
@@ -55,6 +56,13 @@ describe Circleci::Env::DSL::Project do
     it "should include envvars if available" do
       project.env("key1" => "val1", "key2" => "val2")
       expect(project.to_s).to eq "Project(id=vcs_type/username/repository, envvars=[Envvar(key1=val1), Envvar(key2=val2))])"
+    end
+
+    it "should include ssh_keys if available" do
+      ssh_key1 = ::SSHKey.generate
+      ssh_key2 = ::SSHKey.generate
+      project.ssh_key("host1.example.com" => ssh_key1.private_key, "host2.example.com" => ssh_key2.private_key)
+      expect(project.to_s).to eq "Project(id=vcs_type/username/repository, ssh_keys=[SSHKey(host1.example.com=#{ssh_key1.md5_fingerprint}), SSHKey(host2.example.com=#{ssh_key2.md5_fingerprint}))])"
     end
   end
 end

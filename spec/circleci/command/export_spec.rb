@@ -1,16 +1,33 @@
 require "spec_helper"
 require "circleci/env/command/export"
+require "sshkey"
 
 describe Circleci::Env::Command::Export do
   let(:cmd) { Circleci::Env::Command::Export.new(token: 'token', filter: '^github\/hakobera\/circleci-env-test-01$') }
+  let(:ssh_key) { ::SSHKey.generate }
   let!(:stub_connection) do
     Faraday.new do |builder|
       builder.response :raise_error
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
         stub.get('/api/v1.1/projects') do
           [200, {}, JSON.generate([
-            { "vcs_type" => "github", "username" => "hakobera", "reponame" => "circleci-env-test-01" },
-            { "vcs_type" => "github", "username" => "hakobera", "reponame" => "circleci-env-test-02" },
+            {
+              "vcs_type" => "github",
+              "username" => "hakobera",
+              "reponame" => "circleci-env-test-01",
+              "ssh_keys" => [
+                {
+                  "hostname": "test1.example.com",
+                  "public_key": ssh_key.ssh_public_key,
+                  "fingerprint": ssh_key.md5_fingerprint
+                }
+              ]
+            },
+            {
+              "vcs_type" => "github",
+              "username" => "hakobera",
+              "reponame" => "circleci-env-test-02"
+            },
           ])]
         end
 
@@ -36,6 +53,9 @@ project "github/hakobera/circleci-env-test-01" do
   env(
     "KEY1" => "xxxxu1",
     "KEY2" => "xxxxu2",
+  )
+  ssh_key(
+    "test1.example.com" => "<fingerprint> #{ssh_key.md5_fingerprint}",
   )
 end
 EOS

@@ -2,6 +2,8 @@ require "circleci/env"
 require "circleci/env/api"
 require "circleci/env/dsl"
 require "circleci/env/vault"
+require "circleci/env/command/apply/envvars"
+require "circleci/env/command/apply/ssh_keys"
 require "colorize"
 
 module Circleci
@@ -9,8 +11,8 @@ module Circleci
     module Command
       class Apply
         include Circleci::Env::Vault
-
-        CIRCLECI_MASK_PREFIX = 'xxxx'
+        include Circleci::Env::Command::ApplyEnvvars
+        include Circleci::Env::Command::ApplySSHKeys
 
         def initialize(config:, token:, password:, dry_run: false)
           @config = config
@@ -44,53 +46,20 @@ module Circleci
         end
 
         def apply(project)
-          current_envvars = api.list_envvars(project.id).map{|e| [e['name'], e['value']]}.to_h
-          defined_names = project.envvars.map(&:name)
-
-          add_envvars = project.envvars.select{|e| !current_envvars.has_key?(e.name)}
-          update_envvars = project.envvars.select{|e| current_envvars.has_key?(e.name)}
-          delete_envvars = current_envvars.select{|k, v| !defined_names.include?(k)}
-
           puts ""
           puts "=== #{project.id}"
           puts ""
           puts "Progress#{dry_run? ? '(dry-run)' : ''}: |"
-
-          add_envvars.each do |envvar|
-            puts "  + add    #{envvar.name}=#{envvar.value.to_s}".light_green
-            api.add_envvar(project.id, envvar.name, envvar.value.to_str) unless dry_run?
-          end
-
-          delete_envvars.each do |name, value|
-            puts "  - delete #{name}".red
-            api.delete_envvar(project.id, name) unless dry_run?
-          end
-
-          update_envvars.each do |envvar|
-            prefix = "  ~"
-            msg_tmpl = "update #{envvar.name}=#{envvar.value.to_s}"
-            # CircleCI masked value prefix is 'xxxx', so remove it.
-            current_suffix = current_envvars[envvar.name][CIRCLECI_MASK_PREFIX.length..-1]
-            if !current_suffix.empty? && envvar.value.end_with?(current_suffix)
-              prefix = "  ?"
-              msg = "#{prefix} #{msg_tmpl}".light_blue
-            else
-              msg = "#{prefix} #{msg_tmpl}".yellow
-            end
-            puts msg
-            api.add_envvar(project.id, envvar.name, envvar.value.to_str) unless dry_run?
-          end
-
+          apply_envvars(project)
+          apply_ssh_keys(project)
           show_result(project) unless dry_run?
         end
 
         def show_result(project)
           puts ""
           puts "Result: |"
-
-          api.list_envvars(project.id).each do |envvar|
-            puts "  #{envvar['name']}=#{envvar['value']}"
-          end
+          show_envvars(project)
+          show_ssh_keys(project)
         end
 
         def api
@@ -99,6 +68,21 @@ module Circleci
 
         def dry_run?
           @dry_run
+        end
+
+        def log_add(message)
+          puts "  + add    #{message}".light_green
+        end
+
+        def log_delete(message)
+          puts "  - delete #{message}".red
+        end
+
+        def log_update(message, changed=true)
+          prefix = changed ?  "  ~" : "  ?"
+          tmpl = "#{prefix} update #{message}"
+          log = changed ? tmpl.yellow : tmpl.light_blue
+          puts log
         end
       end
     end

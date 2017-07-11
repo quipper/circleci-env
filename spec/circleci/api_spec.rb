@@ -1,7 +1,9 @@
 require "spec_helper"
 require "circleci/env/api"
+require "sshkey"
 
 describe Circleci::Env::Api do
+  let(:ssh_key) { ::SSHKey.generate }
   let!(:stub_connection) do
     Faraday.new do |builder|
       builder.response :raise_error
@@ -14,7 +16,7 @@ describe Circleci::Env::Api do
         end
 
         stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar') do
-          [200, {}, JSON.generate([{ "name" => "KEY", "value" => "xxxxue" }])]
+          [200, { content_type: 'application/json' }, JSON.generate([{ "name" => "KEY", "value" => "xxxxue" }])]
         end
 
         stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-not-found/envvar') do
@@ -47,6 +49,14 @@ describe Circleci::Env::Api do
 
         stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar/NEW_KEY') do
           [200, {}, JSON.generate({ "message" => "ok" })]
+        end
+
+        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "host1.example.com", private_key: ssh_key.private_key }) do
+          [200, {}, ""]
+        end
+
+        stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "host1.example.com", fingerprint: ssh_key.md5_fingerprint }) do
+          [200, {}, ""]
         end
       end
     end
@@ -121,24 +131,29 @@ describe Circleci::Env::Api do
     end
   end
 
-  describe "#get_envvar" do
-    it "should get single envvar of a project" do
-      res = @api.get_envvar("github/hakobera/circleci-env-test-01", "KEY")
-      expect(res).to eq({ "name" => "KEY", "value" => "xxxxue" })
+  describe "#add_ssh_key" do
+    it "should add ssh key of a project" do
+      hostname = "host1.example.com"
+      res = @api.add_ssh_key("github/hakobera/circleci-env-test-01", hostname, ssh_key.private_key)
+      expect(res).to eq("")
+
+      if ENV['CIRCLECI']
+        settings = @api.get_settings("github/hakobera/circleci-env-test-01")
+        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname}.first['fingerprint']).to eq ssh_key.md5_fingerprint
+      end
     end
   end
 
-  describe "#add_envvar" do
-    it "should add single envvar of a project" do
-      res = @api.add_envvar("github/hakobera/circleci-env-test-01", "NEW_KEY", "val")
-      expect(res).to eq({ "name" => "NEW_KEY", "value" => "xxxxl" })
-    end
-  end
+  describe "#delete_ssh_key" do
+    it "should delete ssh key of a project" do
+      hostname = "host1.example.com"
+      res = @api.delete_ssh_key("github/hakobera/circleci-env-test-01", hostname, ssh_key.md5_fingerprint)
+      expect(res).to eq("")
 
-  describe "#delete_envvar" do
-    it "shuold delete single envar of a project" do
-      res = @api.delete_envvar("github/hakobera/circleci-env-test-01", "NEW_KEY")
-      expect(res).to eq({ "message" => "ok" })
+      if ENV['CIRCLECI']
+        settings = @api.get_settings("github/hakobera/circleci-env-test-01")
+        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname && k["fingerprint"] == ssh_key.md5_fingerprint}).to be_empty
+      end
     end
   end
 end
