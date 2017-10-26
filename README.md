@@ -31,22 +31,22 @@
 
 ## Installation
 
-Add this line to your application's Gemfile:
+First, download the source:
 
 ```ruby
-gem 'circleci-env'
+$ git clone git@github.com:quipper/circleci-env.git
 ```
 
-And then execute:
+Build the gem:
 
 ```sh
-$ bundle
+$ cd circleci-env && gem build circleci-env.gemspec
 ```
 
-Or install it yourself as:
+Install it (the filename/version may vary)
 
 ```sh
-$ gem install circleci-env
+$ gem install circleci-env-0.2.0.gem
 ```
 
 ## Supported Settings
