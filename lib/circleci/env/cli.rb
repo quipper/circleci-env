@@ -31,7 +31,7 @@ module Circleci
 
         command :apply do |c|
           c.syntax = "circleci-env apply [options]"
-          c.description = "Apply CiecleCI environment variables from config files"
+          c.description = "Apply CircleCI environment variables from config files"
           c.option "-c", "--config FILE", String, "Config file name"
           c.option "--token TOKEN", String, "CircleCI API token"
           c.option "-p", "--password PASSWORD", String, "Specify password"
@@ -54,7 +54,7 @@ module Circleci
 
         command :export do |c|
           c.syntax = "circleci-env export [options]"
-          c.description = "Export CiecleCI environment variables from API"
+          c.description = "Export CircleCI environment variables from API"
           c.option "--filter REGEX", String, "Regex to filter projects"
           c.option "--ignore-empty", "Ignore project which has no environment variables"
           c.option "--token TOKEN", String, "CircleCI API token"

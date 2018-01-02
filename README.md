@@ -63,8 +63,8 @@ $ circleci-env --help                                                           
   circleci-env is a tool to manage CircleCI environment variables.
 
   Commands:
-    apply       Apply CiecleCI environment variables from config files
-    export      Export CiecleCI environment variables from API
+    apply       Apply CircleCI environment variables from config files
+    export      Export CircleCI environment variables from API
     help        Display global or [command] help documentation
     vault list  List all secret variables
     vault read  Read secret variable
