@@ -217,7 +217,7 @@ You can read/write encrypted secret value and refer it as variable in `Envfile.r
    |- ...
 ```
 
-All secret variables are stored in file in directory named `secret`.
+All secret variables are stored in file in a directory named `secret`, or you can specify any directory with the environment variable `CIRCLECI_ENV_SECRET_DIR`.
 Each file include value of secret varaiable and must have `.vault` file extention.
 
 In `Envfile.rb`, you can refer these variables by filename without extention using `secret` method.
