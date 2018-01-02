@@ -131,28 +131,27 @@ describe Circleci::Env::Api do
     end
   end
 
-  describe "#add_ssh_key" do
+  describe "#add_ssh_key and #delete_ssh_key" do
     it "should add ssh key of a project" do
       hostname = "host1.example.com"
+      # Add an SSH key
       res = @api.add_ssh_key("github/quipper/circleci-env-test-01", hostname, ssh_key.private_key)
       expect(res).to eq("")
 
       if ENV['CIRCLECI']
         settings = @api.get_settings("github/quipper/circleci-env-test-01")
-        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname}.first['fingerprint']).to eq ssh_key.md5_fingerprint
+        fingerprints = settings["ssh_keys"].select{|k| k["hostname"] == hostname}.map{|k| k["fingerprint"]}
+        expect(fingerprints).to include(ssh_key.md5_fingerprint)
       end
-    end
-  end
 
-  describe "#delete_ssh_key" do
-    it "should delete ssh key of a project" do
-      hostname = "host1.example.com"
+      # Delete the key
       res = @api.delete_ssh_key("github/quipper/circleci-env-test-01", hostname, ssh_key.md5_fingerprint)
       expect(res).to eq("")
 
       if ENV['CIRCLECI']
         settings = @api.get_settings("github/quipper/circleci-env-test-01")
-        expect(settings["ssh_keys"].select{|k| k["hostname"] == hostname && k["fingerprint"] == ssh_key.md5_fingerprint}).to be_empty
+        fingerprints = settings["ssh_keys"].select{|k| k["hostname"] == hostname}.map{|k| k["fingerprint"]}
+        expect(fingerprints).not_to include(ssh_key.md5_fingerprint)
       end
     end
   end
