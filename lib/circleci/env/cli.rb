@@ -1,6 +1,7 @@
 require "commander"
 require "circleci/env/command/apply"
 require "circleci/env/command/export"
+require "circleci/env/command/shell_export"
 require "circleci/env/command/vault/list"
 require "circleci/env/command/vault/read"
 require "circleci/env/command/vault/rekey"
@@ -68,6 +69,22 @@ module Circleci
               token: options.token,
               filter: options.filter,
               ignore_empty: options.ignore_empty
+            ).run
+          end
+        end
+
+        command :'shell-export' do |c|
+          c.syntax = "circleci-env shell-export [options] <project_id>"
+          c.description = "Shew a shell expression to export all environment variables on a project"
+          c.option "-c", "--config FILE", String, "Config file name"
+          c.option "-p", "--password PASSWORD", String, "Specify password"
+          c.option "--password-file PASSWORD_FILE", String, "Specify password file"
+          c.action do |args, options|
+            options.default config: "Envfile.rb"
+            Command::ShellExport.new(
+              config: options.config,
+              password: fetch_password(options),
+              project_id: args.first
             ).run
           end
         end
