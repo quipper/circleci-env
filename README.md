@@ -156,7 +156,7 @@ end
 
 ### For multiple project
 
-`circleci-env` recommand to use following project structure.
+`circleci-env` recommends to use following project structure.
 
 ```
 |- Envfile
@@ -220,9 +220,9 @@ You can read/write encrypted secret value and refer it as variable in `Envfile.r
 ```
 
 All secret variables are stored in file in a directory named `secret`, or you can specify any directory with the environment variable `CIRCLECI_ENV_SECRET_DIR`.
-Each file include value of secret varaiable and must have `.vault` file extention.
+Each file includes a value of the secret and must have `.vault` file extension.
 
-In `Envfile.rb`, you can refer these variables by filename without extention using `secret` method.
+In `Envfile.rb`, you can refer to these variables by filename without extension using `secret` method.
 For example, you can refer secret value in `secrete_key.vault` like:
 
 ```rb
@@ -266,7 +266,7 @@ $ circleci-env vault read secret_key
 #=> "Some secret value"
 ```
 
-This command read a secret varable from `secret_key.valut` in `secret` directory.
+This command read a secret variable from `secret_key.valut` in `secret` directory.
 
 ### List all secret variables
 
