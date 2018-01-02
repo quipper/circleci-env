@@ -57,23 +57,25 @@ $ gem install circleci-env-0.2.0.gem
 ## Usage
 
 ```sh
-$ circleci-env --help                                                                                                              (git)-[update-readme]  (m1)
+$ circleci-env --help
   circleci-env
 
   circleci-env is a tool to manage CircleCI environment variables.
 
   Commands:
-    apply       Apply CircleCI environment variables from config files
-    export      Export CircleCI environment variables from API
-    help        Display global or [command] help documentation
-    vault list  List all secret variables
-    vault read  Read secret variable
-    vault write Write secret variable
+    apply        Apply CircleCI environment variables from config files
+    export       Export CircleCI environment variables from API
+    help         Display global or [command] help documentation
+    shell-export Shew a shell expression to export all environment variables on a project
+    vault list   List all secret variables
+    vault read   Read secret variable
+    vault rekey  Change password of all secret variables
+    vault write  Write secret variable
 
   Global Options:
-    -h, --help           Display help documentation
-    -v, --version        Display version information
-    -t, --trace          Display backtrace when an error occurs
+    -h, --help           Display help documentation 
+    -v, --version        Display version information 
+    -t, --trace          Display backtrace when an error occurs 
 ```
 
 ```sh
@@ -331,6 +333,23 @@ Export feature create a file per projects following folder structure like this:
       |
       |- organization
          |- repo3.rb
+```
+
+## Show a shell expression to export all environment variables on a project. 
+`circleci-env` can show all environment variables on a project as a shell export's expression.
+
+```sh
+$ export CIRCLECI_ENV_PASSWORD=xxx
+$ circleci-env shell-export github/username/repo
+export KEY1=VALUE1
+export KEY2=VALUE2
+export KEY3=VALUE3
+```
+
+So you can export them with `eval`
+
+```sh
+$ eval "$(circleci-env shell-export github/username/repo)"
 ```
 
 ## Development
