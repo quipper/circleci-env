@@ -62,6 +62,13 @@ describe Circleci::Env::Api do
     end
   end
 
+  ##
+  # [NOTE]
+  # In CircleCI, this spec calls actual CircleCI API.
+  # CIRCLECI_TOKEN will use quippo@quipper.com's one, and the token operates the settings of the repositories below.
+  # - https://circleci.com/gh/quipper/circleci-env-test-01/edit
+  # - https://circleci.com/gh/quipper/circleci-env-test-02/edit
+  ##
   before do
     @api = Circleci::Env::Api.new(ENV['CIRCLECI_TOKEN'])
     allow(@api).to receive(:conn).and_return(stub_connection) if not ENV.has_key?('CIRCLECI')
