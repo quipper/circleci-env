@@ -2,7 +2,7 @@ require "spec_helper"
 require "circleci/env/command/shell_export"
 
 describe Circleci::Env::Command::ShellExport do
-  let(:cmd) { Circleci::Env::Command::ShellExport.new(config: "spec/data/Envfile.rb", password: "pass", project_id: "github/hakobera/circleci-env-test-01") }
+  let(:cmd) { Circleci::Env::Command::ShellExport.new(config: "spec/data/Envfile.rb", password: "pass", project_id: "github/quipper/circleci-env-test-01") }
   let(:ssh_key1) { ::SSHKey.generate }
   let(:ssh_key3) { ::SSHKey.generate }
   let(:ssh_key4) { ::SSHKey.generate }

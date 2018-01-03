@@ -1,4 +1,4 @@
-project "github/hakobera/circleci-env-test-02" do
+project "github/quipper/circleci-env-test-02" do
   env(
     "KEY" => "value1",
     "Abc" => "value1",

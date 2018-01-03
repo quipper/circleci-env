@@ -1,3 +1,3 @@
-project "github/hakobera/circleci-env-test-01" do
+project "github/quipper/circleci-env-test-01" do
   env(
 end
