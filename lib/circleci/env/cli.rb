@@ -99,7 +99,7 @@ module Circleci
             Command::Vault::Write.new(
               password: fetch_password(options),
               name: args.first,
-              value: args[1] || File.read(options.input_file)
+              value: args[1] || File.read(options.input_file).chomp
             ).run
           end
         end
