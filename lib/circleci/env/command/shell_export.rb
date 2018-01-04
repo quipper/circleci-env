@@ -24,7 +24,7 @@ module Circleci
           raise "Project #{@project_id} not found" unless project
 
           project.envvars.each do |e|
-            puts "export #{e.name}=#{e.value}"
+            puts "export #{e.name}='#{e.value}'"
           end
         end
       end

@@ -341,9 +341,9 @@ Export feature create a file per projects following folder structure like this:
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
 $ circleci-env shell-export github/username/repo
-export KEY1=VALUE1
-export KEY2=VALUE2
-export KEY3=VALUE3
+export KEY1='VALUE1'
+export KEY2='VALUE2'
+export KEY3='VALUE3'
 ```
 
 So you can export them with `eval`

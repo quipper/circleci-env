@@ -18,9 +18,9 @@ describe Circleci::Env::Command::ShellExport do
   describe "#run" do
     it "should call read" do
       result = <<EOS
-export KEY1=value1
-export KEY2=value2
-export KEY4=value4
+export KEY1='value1'
+export KEY2='value2'
+export KEY4='value4'
 EOS
       expect{ cmd.run }.to output(result).to_stdout
     end
