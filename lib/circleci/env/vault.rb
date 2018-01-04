@@ -14,7 +14,7 @@ module Circleci
       end
 
       def secret_dir
-        "secret"
+        ENV['CIRCLECI_ENV_SECRET_DIR'] || "secret"
       end
 
       def secret_file_path(name)

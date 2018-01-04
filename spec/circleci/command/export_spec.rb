@@ -3,7 +3,7 @@ require "circleci/env/command/export"
 require "sshkey"
 
 describe Circleci::Env::Command::Export do
-  let(:cmd) { Circleci::Env::Command::Export.new(token: 'token', filter: '^github\/hakobera\/circleci-env-test-01$') }
+  let(:cmd) { Circleci::Env::Command::Export.new(token: 'token', filter: '^github\/quipper\/circleci-env-test-01$') }
   let(:ssh_key) { ::SSHKey.generate }
   let!(:stub_connection) do
     Faraday.new do |builder|
@@ -13,7 +13,7 @@ describe Circleci::Env::Command::Export do
           [200, {}, JSON.generate([
             {
               "vcs_type" => "github",
-              "username" => "hakobera",
+              "username" => "quipper",
               "reponame" => "circleci-env-test-01",
               "ssh_keys" => [
                 {
@@ -25,13 +25,13 @@ describe Circleci::Env::Command::Export do
             },
             {
               "vcs_type" => "github",
-              "username" => "hakobera",
+              "username" => "quipper",
               "reponame" => "circleci-env-test-02"
             },
           ])]
         end
 
-        stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar') do
+        stub.get('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar') do
           [200, {}, JSON.generate([{ "name" => "KEY1", "value" => "xxxxu1" }, { "name" => "KEY2", "value" => "xxxxu2" }])]
         end
       end
@@ -47,9 +47,9 @@ describe Circleci::Env::Command::Export do
   describe "#run" do
     it "should export current project settings as file" do
       cmd.run
-      out = File.read('projects/github/hakobera/circleci-env-test-01.rb')
+      out = File.read('projects/github/quipper/circleci-env-test-01.rb')
       expected = <<-EOS
-project "github/hakobera/circleci-env-test-01" do
+project "github/quipper/circleci-env-test-01" do
   env(
     "KEY1" => "xxxxu1",
     "KEY2" => "xxxxu2",

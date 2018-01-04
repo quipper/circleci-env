@@ -15,46 +15,46 @@ describe Circleci::Env::Command::Apply do
     Faraday.new do |builder|
       builder.response :raise_error
       builder.adapter :test, Faraday::Adapter::Test::Stubs.new do |stub|
-        stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar') do
+        stub.get('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar') do
           [200, {}, JSON.generate([
                       { "name" => "KEY1", "value" => "xxxxue0" },
                       { "name" => "KEY3", "value" => "xxxxue2" },
                       { "name" => "KEY4", "value" => "xxxxue4" }])]
         end
 
-        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar', { name: "KEY1", value: "value1" }) do
+        stub.post('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar', { name: "KEY1", value: "value1" }) do
           [200, {}, JSON.generate({ "name" => "KEY1", "value" => "xxxxue1" })]
         end
 
-        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar', { name: "KEY2", value: "value2" }) do
+        stub.post('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar', { name: "KEY2", value: "value2" }) do
           [200, {}, JSON.generate({ "name" => "KEY2", "value" => "xxxxue2" })]
         end
 
-        stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar/KEY3') do
+        stub.delete('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar/KEY3') do
           [200, {}, JSON.generate({ "message" => "ok" })]
         end
 
-        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/envvar', { name: "KEY4", value: "value4" }) do
+        stub.post('/api/v1.1/project/github/quipper/circleci-env-test-01/envvar', { name: "KEY4", value: "value4" }) do
           [200, {}, JSON.generate({ "name" => "KEY4", "value" => "xxxxue4" })]
         end
 
-        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "test3.example.com", private_key: ssh_key3.private_key }) do
+        stub.post('/api/v1.1/project/github/quipper/circleci-env-test-01/ssh-key', { hostname: "test3.example.com", private_key: ssh_key3.private_key }) do
           [200, {}, ""]
         end
 
-        stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "test2.example.com", fingerprint: ssh_key2.md5_fingerprint }) do
+        stub.delete('/api/v1.1/project/github/quipper/circleci-env-test-01/ssh-key', { hostname: "test2.example.com", fingerprint: ssh_key2.md5_fingerprint }) do
           [200, {}, ""]
         end
 
-        stub.post('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "test4.example.com", private_key: ssh_key4.private_key }) do
+        stub.post('/api/v1.1/project/github/quipper/circleci-env-test-01/ssh-key', { hostname: "test4.example.com", private_key: ssh_key4.private_key }) do
           [200, {}, ""]
         end
 
-        stub.delete('/api/v1.1/project/github/hakobera/circleci-env-test-01/ssh-key', { hostname: "test4.example.com", fingerprint: ssh_key1.md5_fingerprint }) do
+        stub.delete('/api/v1.1/project/github/quipper/circleci-env-test-01/ssh-key', { hostname: "test4.example.com", fingerprint: ssh_key1.md5_fingerprint }) do
           [200, {}, ""]
         end
 
-        stub.get('/api/v1.1/project/github/hakobera/circleci-env-test-01/settings') do
+        stub.get('/api/v1.1/project/github/quipper/circleci-env-test-01/settings') do
           if @first_call
             @first_call = false
             [200, {}, JSON.generate({
@@ -104,10 +104,10 @@ describe Circleci::Env::Command::Apply do
                       .and_yield("ssh_key1", ssh_key1.private_key)
                       .and_yield("ssh_key3", ssh_key3.private_key)
                       .and_yield("ssh_key4", ssh_key4.private_key)
-      expect(api).to receive(:add_envvar).with("github/hakobera/circleci-env-test-01", "KEY1", "value1")
-      expect(api).to receive(:add_envvar).with("github/hakobera/circleci-env-test-01", "KEY2", "value2")
-      expect(api).to receive(:delete_envvar).with("github/hakobera/circleci-env-test-01", "KEY3")
-      expect(api).to receive(:add_envvar).with("github/hakobera/circleci-env-test-01", "KEY4", "value4")
+      expect(api).to receive(:add_envvar).with("github/quipper/circleci-env-test-01", "KEY1", "value1")
+      expect(api).to receive(:add_envvar).with("github/quipper/circleci-env-test-01", "KEY2", "value2")
+      expect(api).to receive(:delete_envvar).with("github/quipper/circleci-env-test-01", "KEY3")
+      expect(api).to receive(:add_envvar).with("github/quipper/circleci-env-test-01", "KEY4", "value4")
     end
 
     describe "#run" do
@@ -116,7 +116,7 @@ describe Circleci::Env::Command::Apply do
 Load config from spec/data/Envfile.rb
 Apply spec/data/Envfile.rb to CircleCI
 
-=== github/hakobera/circleci-env-test-01
+=== github/quipper/circleci-env-test-01
 
 Progress: |
 envvars:
@@ -166,7 +166,7 @@ EOS
 Load config from spec/data/Envfile.rb
 Apply spec/data/Envfile.rb to CircleCI (dry-run)
 
-=== github/hakobera/circleci-env-test-01
+=== github/quipper/circleci-env-test-01
 
 Progress(dry-run): |
 envvars:

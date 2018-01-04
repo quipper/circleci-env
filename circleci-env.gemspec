@@ -7,10 +7,10 @@ Gem::Specification.new do |spec|
   spec.name          = "circleci-env"
   spec.version       = Circleci::Env::VERSION
   spec.authors       = ["Kazuyuki Honda"]
-  spec.email         = ["hakobera@gmail.com"]
+  spec.email         = ["sre@quipper.com"]
 
   spec.summary       = %q{A tool to manage CircleCI Environment Variables using CircleCI API.}
-  spec.homepage      = "https://github.com/hakobera/circleci-env"
+  spec.homepage      = "https://github.com/quipper/circleci-env"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
