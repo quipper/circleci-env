@@ -30,7 +30,7 @@ describe Circleci::Env::Vault do
     end
 
     describe "#read" do
-      it "should call Ansible::Valut.read()" do
+      it "should call Ansible::Vault.read()" do
         name = "name"
         password = "password"
         allow(Ansible::Vault).to receive(:read).with(path: secret_file_path(name), password: password)
@@ -39,7 +39,7 @@ describe Circleci::Env::Vault do
     end
 
     describe "#write" do
-      it "should call Ansible::Valut.write()" do
+      it "should call Ansible::Vault.write()" do
         name = "name"
         value = "value"
         password = "password"

@@ -240,7 +240,7 @@ end
 
 ### Write secret variable
 
-To encrypt secret variable and write it to file, use `valut write` command.
+To encrypt secret variable and write it to file, use `vault write` command.
 
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
@@ -254,11 +254,11 @@ $ export CIRCLECI_ENV_PASSWORD=xxx
 $ circleci-env vault write secret_key --input-file secret_file
 ```
 
-This command encrypt values and write it into a file named `secret_key.valut` in `secret` directory.
+This command encrypt values and write it into a file named `secret_key.vault` in `secret` directory.
 
 ### Read secret variable
 
-To decrypt secret variable from, use `valut read` command.
+To decrypt secret variable from, use `vault read` command.
 
 ```sh
 $ export CIRCLECI_ENV_PASSWORD=xxx
@@ -266,7 +266,7 @@ $ circleci-env vault read secret_key
 #=> "Some secret value"
 ```
 
-This command read a secret variable from `secret_key.valut` in `secret` directory.
+This command read a secret variable from `secret_key.vault` in `secret` directory.
 
 ### List all secret variables
 
