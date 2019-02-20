@@ -1,0 +1,35 @@
+version: 2
+
+jobs:
+  test_ruby_2_5:
+    working_directory: ~/project
+    docker:
+      - image: circleci/ruby:2.5.3
+    steps:
+      - checkout
+      - run:
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3 --clean
+      - run:
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o /tmp/test-results/rspec.xml
+      - store_test_results:
+          path: /tmp/test-results
+
+  test_ruby_2_6:
+    working_directory: ~/project
+    docker:
+      - image: circleci/ruby:2.6.1
+    steps:
+      - checkout
+      - run:
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3 --clean
+      - run:
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o /tmp/test-results/rspec.xml
+      - store_test_results:
+          path: /tmp/test-results
+
+workflows:
+  version: 2
+  run-tests:
+    jobs:
+      - test_ruby_2_5
+      - test_ruby_2_6
