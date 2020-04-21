@@ -46,7 +46,7 @@ $ cd circleci-env && gem build circleci-env.gemspec
 Install it (the filename/version may vary)
 
 ```sh
-$ gem install circleci-env-0.2.0.gem
+$ gem install circleci-env-0.3.1.gem
 ```
 
 ## Supported Settings
