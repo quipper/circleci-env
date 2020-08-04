@@ -31,7 +31,7 @@ module Circleci
           puts "Apply #{@config} to CircleCI#{dry_run? ? ' (dry-run)' : ''}"
           changed = false
           DSL::Project::projects.each do |proj|
-            if !no_change?(proj) then
+            unless no_change?(proj)
               changed = true
               apply(proj)
             end
