@@ -3,10 +3,8 @@ module Circleci
     module Command
       module ApplySSHKeys
         def apply_ssh_keys(project)
-          puts "ssh_keys:"
-          if ssh_keys_no_change?(project)
-            puts "  no change"
-          else
+          if !ssh_keys_no_change?(project)
+            puts "ssh_keys:"
             add_ssh_keys(project)
             delete_ssh_keys(project)
             update_ssh_keys(project)

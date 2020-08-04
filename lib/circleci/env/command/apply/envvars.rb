@@ -5,10 +5,16 @@ module Circleci
         CIRCLECI_MASK_PREFIX = 'xxxx'
 
         def apply_envvars(project)
-          puts "envvars:"
-          add_envvars(project)
-          delete_envvars(project)
-          update_envvars(project)
+          if !envvars_no_change?(project) then
+            puts "envvars:"
+            add_envvars(project)
+            delete_envvars(project)
+            update_envvars(project)
+          end
+        end
+
+        def envvars_no_change?(project)
+          added_envvars(project).empty? && deleted_envvars(project).empty? && updated_envvars(project).empty?
         end
 
         def show_envvars(project)

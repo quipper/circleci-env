@@ -29,8 +29,15 @@ module Circleci
           load_config(@config)
 
           puts "Apply #{@config} to CircleCI#{dry_run? ? ' (dry-run)' : ''}"
+          changed = false
           DSL::Project::projects.each do |proj|
-            apply(proj)
+            if !no_change?(proj) then
+              changed = true
+              apply(proj)
+            end
+          end
+          if !changed then
+            puts "no projects are changed"
           end
         end
 
@@ -45,14 +52,20 @@ module Circleci
           end
         end
 
+        def no_change?(project)
+          envvars_no_change?(project) && ssh_keys_no_change?(project)
+        end
+
         def apply(project)
-          puts ""
-          puts "=== #{project.id}"
-          puts ""
-          puts "Progress#{dry_run? ? '(dry-run)' : ''}: |"
-          apply_envvars(project)
-          apply_ssh_keys(project)
-          show_result(project) unless dry_run?
+          if !no_change?(project) then
+            puts ""
+            puts "=== #{project.id}"
+            puts ""
+            puts "Progress#{dry_run? ? '(dry-run)' : ''}: |"
+            apply_envvars(project)
+            apply_ssh_keys(project)
+            show_result(project) unless dry_run?
+          end
         end
 
         def show_result(project)
