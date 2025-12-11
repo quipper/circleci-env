@@ -21,13 +21,13 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "ansible-vault", "~> 0.2.1"
-  spec.add_runtime_dependency "commander", "~> 4.4.3"
-  spec.add_runtime_dependency "colorize", "~> 0.8.1"
-  spec.add_runtime_dependency "faraday", "~> 1.10.1"
+  spec.add_runtime_dependency "commander", "~> 5.0.0"
+  spec.add_runtime_dependency "colorize", "~> 1.1.0"
+  spec.add_runtime_dependency "faraday", "~> 1.10.4"
   spec.add_runtime_dependency "faraday_middleware", "~> 1.2.0"
-  spec.add_runtime_dependency "sshkey", "~> 1.9.0"
+  spec.add_runtime_dependency "sshkey", "~> 3.0.0"
 
-  spec.add_development_dependency "bundler", "~> 1.13"
+  spec.add_development_dependency "bundler", "~> 4.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "simplecov", "~> 0.12.0"
